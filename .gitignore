@@ -8,3 +8,4 @@ Thumbs.db
 prisma/migrations/dev.db
 *.log
 npm-debug.log*
+.vscode/
