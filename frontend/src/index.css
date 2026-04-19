@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #0F0F0F;
+  --bg-surface: #1A1A1A;
+  --bg-card: #212121;
+  --bg-hover: #2A2A2A;
+  --text: #F2F2F2;
+  --text-muted: #888888;
+  --text-subtle: #555555;
+  --primary: #00E094;
+  --primary-dim: rgba(0, 224, 148, 0.12);
+  --secondary: #0C65D4;
+  --accent: #7533FC;
+  --border: #2E2E2E;
+  --border-hover: #444444;
+  --danger: #FF4D4D;
+  --warning: #F59E0B;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font-family: 'Nunito Sans', sans-serif;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 3px; }
