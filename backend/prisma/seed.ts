@@ -15,10 +15,6 @@ async function main() {
   const teams = await Promise.all([
     prisma.team.upsert({ where: { id: 1 }, update: {}, create: { id: 1, name: "CA Boca Juniors", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Boca_jrs_badge.svg/200px-Boca_jrs_badge.svg.png" } }),
     prisma.team.upsert({ where: { id: 2 }, update: {}, create: { id: 2, name: "CA River Plate", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/River_plate_logo.svg/200px-River_plate_logo.svg.png" } }),
-    prisma.team.upsert({ where: { id: 3 }, update: {}, create: { id: 3, name: "Racing Club", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Racing_Club_logo.svg/200px-Racing_Club_logo.svg.png" } }),
-    prisma.team.upsert({ where: { id: 4 }, update: {}, create: { id: 4, name: "CA Independiente", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Escudo_del_Club_Atl%C3%A9tico_Independiente.svg/200px-Escudo_del_Club_Atl%C3%A9tico_Independiente.svg.png" } }),
-    prisma.team.upsert({ where: { id: 5 }, update: {}, create: { id: 5, name: "San Lorenzo", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/San_lorenzo_logo.svg/200px-San_lorenzo_logo.svg.png" } }),
-    prisma.team.upsert({ where: { id: 6 }, update: {}, create: { id: 6, name: "Talleres de Córdoba", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Escudo_del_Club_Atl%C3%A9tico_Talleres.svg/200px-Escudo_del_Club_Atl%C3%A9tico_Talleres.svg.png" } }),
   ]);
 
   // ── Seasons ────────────────────────────────────────────
@@ -28,32 +24,50 @@ async function main() {
     prisma.season.upsert({ where: { name: "2026" }, update: {}, create: { name: "2026" } }),
   ]);
 
-  // ── Players ────────────────────────────────────────────
+
+  // ── Players
   const playersData = [
-    { firstName: "Miguel Ángel", lastName: "Merentiel Serrano", dob: "1994-06-14", nationality: "Uruguay", position: "SS", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/448981-1697022829.jpg" },
-    { firstName: "Facundo", lastName: "Colidio", dob: "2000-01-05", nationality: "Argentina", position: "CF", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/387791-1694421557.jpg" },
-    { firstName: "Edinson", lastName: "Cavani", dob: "1987-02-14", nationality: "Uruguay", position: "CF", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/60523-1674048781.jpg" },
-    { firstName: "Lucas", lastName: "Alario", dob: "1992-08-08", nationality: "Argentina", position: "CF", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/232432-1686644141.jpg" },
-    { firstName: "Rodrigo", lastName: "De Paul", dob: "1994-05-24", nationality: "Argentina", position: "CM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/225325-1695286803.jpg" },
-    { firstName: "Valentín", lastName: "Castellanos", dob: "1998-10-17", nationality: "Argentina", position: "CF", teamId: 4, photo: "https://img.a.transfermarkt.technology/portrait/header/348047-1661944078.jpg" },
-    { firstName: "Óscar", lastName: "Romero", dob: "1992-07-04", nationality: "Paraguay", position: "CAM", teamId: 3, photo: "https://img.a.transfermarkt.technology/portrait/header/183568-1631012345.jpg" },
-    { firstName: "Germán", lastName: "Cano", dob: "1988-07-03", nationality: "Brasil", position: "CF", teamId: 5, photo: "https://img.a.transfermarkt.technology/portrait/header/57200-1655290123.jpg" },
-    { firstName: "Ezequiel", lastName: "Barco", dob: "1999-01-29", nationality: "Argentina", position: "CAM", teamId: 5, photo: "https://img.a.transfermarkt.technology/portrait/header/404598-1632091234.jpg" },
-    { firstName: "Cristian", lastName: "Pavón", dob: "1996-01-21", nationality: "Argentina", position: "RW", teamId: 6, photo: "https://img.a.transfermarkt.technology/portrait/header/319795-1660123456.jpg" },
-    { firstName: "Carlos", lastName: "Alcaraz", dob: "2002-05-06", nationality: "Argentina", position: "CM", teamId: 3, photo: "https://img.a.transfermarkt.technology/portrait/header/635105-1695123456.jpg" },
-    { firstName: "Nicolás", lastName: "Tagliafico", dob: "1992-08-31", nationality: "Argentina", position: "LB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/246847-1695678901.jpg" },
-    { firstName: "Marcos", lastName: "Rojo", dob: "1990-03-20", nationality: "Argentina", position: "CB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/165786-1660234567.jpg" },
-    { firstName: "Paulo", lastName: "Díaz", dob: "1997-01-02", nationality: "Chile", position: "CB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/363817-1689234567.jpg" },
-    { firstName: "Sergio", lastName: "Romero", dob: "1987-03-22", nationality: "Argentina", position: "GK", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/58728-1660345678.jpg" },
+    // --- BOCA JUNIORS (IDs 1-11) ---
+    { id: 1, firstName: "Leandro", lastName: "Brey", dob: "2002-09-21", nationality: "Argentina", position: "GK", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/982633-1739888426.jpg?lm=1" },
+    { id: 2, firstName: "Marcelo", lastName: "Weigandt", dob: "2000-01-11", nationality: "Argentina", position: "RB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/491690-1740775551.jpg?lm=1" },
+    { id: 3, firstName: "Lautaro", lastName: "Di Lollo", dob: "2004-03-10", nationality: "Argentina", position: "CB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1019744-1739889666.jpg?lm=1" },
+    { id: 4, firstName: "Ayrton", lastName: "Costa", dob: "1999-07-12", nationality: "Argentina", position: "CB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/842910-1739889633.jpg?lm=1" },
+    { id: 5, firstName: "Lautaro", lastName: "Blanco", dob: "1999-02-19", nationality: "Argentina", position: "LB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/831161-1739896785.jpg?lm=1" },
+    { id: 6, firstName: "Santiago", lastName: "Ascacíbar", dob: "1997-02-25", nationality: "Argentina", position: "CDM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/423436-1739827128.jpg?lm=1" },
+    { id: 7, firstName: "Ander", lastName: "Herrera", dob: "1989-08-14", nationality: "España", position: "CM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/99343-1709675915.png?lm=1" },
+    { id: 8, firstName: "Milton", lastName: "Delgado", dob: "2005-06-16", nationality: "Argentina", position: "CM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1236677-1739899248.jpg?lm=1" },
+    { id: 9, firstName: "Tomás", lastName: "Belmonte", dob: "1998-05-27", nationality: "Argentina", position: "CAM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/483446-1739897240.jpg?lm=1" },
+    { id: 10, firstName: "Milton", lastName: "Giménez", dob: "1996-08-12", nationality: "Argentina", position: "CF", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/730779-1739899590.jpg?lm=1" },
+    { id: 11, firstName: "Exequiel", lastName: "Zeballos", dob: "2002-04-24", nationality: "Argentina", position: "LW", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/661132-1739899419.jpg?lm=1" },
+
+    // --- RIVER PLATE (IDs 12-22) ---
+    { id: 12, firstName: "Santiago", lastName: "Beltrán", dob: "2004-10-21", nationality: "Argentina", position: "GK", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1138089-1762437740.png?lm=1" },
+    { id: 13, firstName: "Gonzalo", lastName: "Montiel", dob: "1997-01-01", nationality: "Argentina", position: "RB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/402733-1762437910.png?lm=1" },
+    { id: 14, firstName: "Lucas", lastName: "Martínez Quarta", dob: "1996-05-10", nationality: "Argentina", position: "CB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/373373-1762437997.png?lm=1" },
+    { id: 15, firstName: "Lautaro", lastName: "Rivero", dob: "2003-11-01", nationality: "Argentina", position: "CB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1261395-1762437856.png?lm=1" },
+    { id: 16, firstName: "Marcos", lastName: "Acuña", dob: "1991-10-28", nationality: "Argentina", position: "LB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/60410-1762438025.png?lm=1" },
+    { id: 17, firstName: "Aníbal", lastName: "Moreno", dob: "1999-05-13", nationality: "Argentina", position: "CDM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/642758-1746577695.jpg?lm=1" },
+    { id: 18, firstName: "Giuliano", lastName: "Galoppo", dob: "1999-06-18", nationality: "Argentina", position: "CM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/567249-1762438415.png?lm=1" },
+    { id: 19, firstName: "Tomás", lastName: "Galván", dob: "2000-04-11", nationality: "Argentina", position: "CAM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/893850-1727449987.jpg?lm=1" },
+    { id: 20, firstName: "Joaquín", lastName: "Freitas", dob: "2005-02-14", nationality: "Argentina", position: "RW", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1324003-1771857419.jpg?lm=1" },
+    { id: 21, firstName: "Facundo", lastName: "Colidio", dob: "2000-01-04", nationality: "Argentina", position: "LW", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/491705-1693315193.png?lm=1" },
+    { id: 22, firstName: "Maximiliano", lastName: "Salas", dob: "1997-12-01", nationality: "Argentina", position: "CF", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/442231-1762438527.png?lm=1" },
   ];
 
-  const players = [];
   for (const p of playersData) {
-    const player = await prisma.player.upsert({
-      where: { id: playersData.indexOf(p) + 1 },
-      update: {},
+    await prisma.player.upsert({
+      where: { id: p.id },
+      update: {
+        firstName: p.firstName,
+        lastName: p.lastName,
+        dateOfBirth: new Date(p.dob),
+        nationality: p.nationality,
+        position: p.position,
+        photoUrl: p.photo,
+        teamId: p.teamId,
+      },
       create: {
-        id: playersData.indexOf(p) + 1,
+        id: p.id,
         firstName: p.firstName,
         lastName: p.lastName,
         dateOfBirth: new Date(p.dob),
@@ -63,26 +77,29 @@ async function main() {
         teamId: p.teamId,
       },
     });
-    players.push(player);
   }
 
-  // ── Stats ── (generamos stats realistas por jugador/temporada)
-  const statsData = [
-    // Merentiel (id=1) - delantero goleador
-    { playerId: 1, seasonId: s2024.id, matchesPlayed: 38, minutesPlayed: 2800, goals: 18, assists: 7, yellowCards: 4, redCards: 0, shotsOnTarget: 52, successfulPasses: 620, passAccuracy: 74.5, aerialDuelsWon: 45, aerialDuelsTotal: 110, defensiveDuelsWon: 22, defensiveDuelsTotal: 48, xG: 15.2, xA: 5.8, recoveries: 38 },
-    { playerId: 1, seasonId: s2025.id, matchesPlayed: 42, minutesPlayed: 3100, goals: 22, assists: 9, yellowCards: 5, redCards: 1, shotsOnTarget: 61, successfulPasses: 710, passAccuracy: 76.3, aerialDuelsWon: 51, aerialDuelsTotal: 120, defensiveDuelsWon: 25, defensiveDuelsTotal: 52, xG: 18.4, xA: 7.2, recoveries: 42 },
-    { playerId: 1, seasonId: s2026.id, matchesPlayed: 10, minutesPlayed: 754, goals: 4, assists: 2, yellowCards: 1, redCards: 0, shotsOnTarget: 14, successfulPasses: 84, passAccuracy: 76.4, aerialDuelsWon: 22, aerialDuelsTotal: 73, defensiveDuelsWon: 19, defensiveDuelsTotal: 32, xG: 3.0, xA: 1.6, recoveries: 15 },
-    // Colidio (id=2) - delantero joven
-    { playerId: 2, seasonId: s2024.id, matchesPlayed: 30, minutesPlayed: 2100, goals: 9, assists: 5, yellowCards: 3, redCards: 0, shotsOnTarget: 38, successfulPasses: 780, passAccuracy: 71.2, aerialDuelsWon: 18, aerialDuelsTotal: 62, defensiveDuelsWon: 35, defensiveDuelsTotal: 90, xG: 8.1, xA: 4.2, recoveries: 68 },
-    { playerId: 2, seasonId: s2025.id, matchesPlayed: 36, minutesPlayed: 2600, goals: 14, assists: 8, yellowCards: 4, redCards: 0, shotsOnTarget: 49, successfulPasses: 890, passAccuracy: 73.1, aerialDuelsWon: 22, aerialDuelsTotal: 70, defensiveDuelsWon: 42, defensiveDuelsTotal: 105, xG: 11.3, xA: 6.1, recoveries: 85 },
-    { playerId: 2, seasonId: s2026.id, matchesPlayed: 9, minutesPlayed: 534, goals: 2, assists: 1, yellowCards: 1, redCards: 0, shotsOnTarget: 12, successfulPasses: 96, passAccuracy: 73.3, aerialDuelsWon: 25, aerialDuelsTotal: 86, defensiveDuelsWon: 46, defensiveDuelsTotal: 97, xG: 1.8, xA: 0.8, recoveries: 91 },
-    // Cavani (id=3)
-    { playerId: 3, seasonId: s2024.id, matchesPlayed: 28, minutesPlayed: 1800, goals: 12, assists: 3, yellowCards: 2, redCards: 0, shotsOnTarget: 40, successfulPasses: 480, passAccuracy: 68.0, aerialDuelsWon: 60, aerialDuelsTotal: 130, defensiveDuelsWon: 15, defensiveDuelsTotal: 35, xG: 10.5, xA: 2.5, recoveries: 20 },
-    { playerId: 3, seasonId: s2025.id, matchesPlayed: 22, minutesPlayed: 1400, goals: 8, assists: 2, yellowCards: 1, redCards: 0, shotsOnTarget: 28, successfulPasses: 360, passAccuracy: 66.5, aerialDuelsWon: 48, aerialDuelsTotal: 105, defensiveDuelsWon: 10, defensiveDuelsTotal: 28, xG: 7.2, xA: 1.8, recoveries: 14 },
-    // De Paul (id=5)
-    { playerId: 5, seasonId: s2024.id, matchesPlayed: 40, minutesPlayed: 3400, goals: 6, assists: 14, yellowCards: 8, redCards: 0, shotsOnTarget: 30, successfulPasses: 1850, passAccuracy: 88.2, aerialDuelsWon: 28, aerialDuelsTotal: 72, defensiveDuelsWon: 95, defensiveDuelsTotal: 180, xG: 4.8, xA: 11.2, recoveries: 180 },
-    { playerId: 5, seasonId: s2025.id, matchesPlayed: 38, minutesPlayed: 3200, goals: 5, assists: 12, yellowCards: 7, redCards: 1, shotsOnTarget: 25, successfulPasses: 1720, passAccuracy: 87.5, aerialDuelsWon: 24, aerialDuelsTotal: 65, defensiveDuelsWon: 88, defensiveDuelsTotal: 170, xG: 4.1, xA: 10.5, recoveries: 165 },
-  ];
+  // ── Stats (Generamos para los 22) ────────────────────────
+  const statsData = playersData.map(p => ({
+    playerId: p.id,
+    seasonId: s2024.id,
+    matchesPlayed: 25 + Math.floor(Math.random() * 12),
+    minutesPlayed: 2000 + Math.floor(Math.random() * 800),
+    goals: ["CF", "RW", "LW"].includes(p.position) ? 8 + Math.floor(Math.random() * 10) : p.position === "CAM" ? 5 : 1,
+    assists: ["CAM", "RW", "LW"].includes(p.position) ? 6 + Math.floor(Math.random() * 6) : 2,
+    yellowCards: ["CB", "CDM"].includes(p.position) ? 5 + Math.floor(Math.random() * 5) : 2,
+    redCards: 0,
+    shotsOnTarget: ["CF", "RW", "LW"].includes(p.position) ? 30 + Math.floor(Math.random() * 20) : 5,
+    successfulPasses: p.position === "CM" ? 1500 : 800,
+    passAccuracy: p.position === "CM" ? 88.5 : 78.0,
+    aerialDuelsWon: ["CB", "CF"].includes(p.position) ? 50 : 15,
+    aerialDuelsTotal: ["CB", "CF"].includes(p.position) ? 80 : 30,
+    defensiveDuelsWon: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 90 : 20,
+    defensiveDuelsTotal: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 150 : 40,
+    xG: ["CF", "RW", "LW"].includes(p.position) ? 9.5 : 1.2,
+    xA: ["CAM", "RW", "LW"].includes(p.position) ? 5.5 : 1.0,
+    recoveries: ["CB", "CDM"].includes(p.position) ? 150 : 40
+  }));
 
   for (const s of statsData) {
     await prisma.playerStats.upsert({
@@ -92,7 +109,7 @@ async function main() {
     });
   }
 
-  console.log(" Seed completado");
+  console.log("Seed completado exitosamente.");
 }
 
 main()
