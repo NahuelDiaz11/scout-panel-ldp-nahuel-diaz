@@ -72,3 +72,17 @@ export async function getNationalities(
     next(err);
   }
 }
+
+export async function getPlayerStats(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = parseInt(req.params.id as string);
+    const result = await playersService.findPlayerStats(id);
+    res.json({ data: result, error: null });
+  } catch (err) {
+    next(err);
+  }
+}

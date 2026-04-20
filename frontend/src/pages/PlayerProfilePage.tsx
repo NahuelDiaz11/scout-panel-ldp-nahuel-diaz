@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { usePlayer } from "../hooks/usePlayers";
+import { usePlayerStats } from "../hooks/usePlayers";
 import { useCompareStore } from "../store/useCompareStore";
 import { StatCircle } from "../components/players/StatCircle";
 import { PlayerStatsTable } from "../components/players/PlayerStatsTable";
@@ -23,10 +23,14 @@ function getAge(dateOfBirth: string) {
 export function PlayerProfilePage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { data, isLoading, isError } = usePlayer(Number(id));
+    
+    // jugador + percentiles
+    const { data, isLoading, isError } = usePlayerStats(Number(id));
     const { addPlayer, removePlayer, isSelected, selectedPlayers } = useCompareStore();
 
-    const player = data?.data;
+    const player = data?.data?.player;
+    const percentiles = data?.data?.percentiles;
+
     const selected = player ? isSelected(player.id) : false;
     const canAdd = selectedPlayers.length < 3;
 
@@ -58,33 +62,27 @@ export function PlayerProfilePage() {
 
     const latestStats = player.stats?.[0];
 
-    // Calcular porcentajes para los círculos de estadísticas
-    const statCircles = latestStats ? [
+    // percentiles del backend
+    const statCircles = percentiles && latestStats ? [
         {
             label: "Shots On Target",
             value: latestStats.shotsOnTarget,
-            pct: Math.min(100, Math.round((latestStats.shotsOnTarget / 80) * 100)),
+            pct: percentiles.shotsOnTarget,
         },
         {
             label: "Goal Conversion",
             value: latestStats.goals,
-            pct: latestStats.shotsOnTarget > 0
-                ? Math.round((latestStats.goals / latestStats.shotsOnTarget) * 100)
-                : 0,
+            pct: percentiles.goals,
         },
         {
             label: "Offensive Duels Won",
             value: latestStats.aerialDuelsWon,
-            pct: latestStats.aerialDuelsTotal > 0
-                ? Math.round((latestStats.aerialDuelsWon / latestStats.aerialDuelsTotal) * 100)
-                : 0,
+            pct: percentiles.aerialDuelsWon,
         },
         {
             label: "Aerial Duels Won",
             value: latestStats.aerialDuelsWon,
-            pct: latestStats.aerialDuelsTotal > 0
-                ? Math.round((latestStats.aerialDuelsWon / latestStats.aerialDuelsTotal) * 100)
-                : 0,
+            pct: percentiles.aerialDuelsWon,
         },
     ] : [];
 

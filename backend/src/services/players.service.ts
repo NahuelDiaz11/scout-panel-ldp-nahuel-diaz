@@ -132,3 +132,68 @@ export async function findNationalities() {
 
   return result.map((p) => p.nationality);
 }
+
+export async function findPlayerStats(playerId: number) {
+  if (isNaN(playerId)) throw new AppError(400, "Invalid player ID");
+
+  const player = await prisma.player.findUnique({
+    where: { id: playerId },
+    include: {
+      team: true,
+      stats: {
+        include: { season: true },
+        orderBy: { season: { name: "desc" } },
+      },
+    },
+  });
+
+  if (!player) throw new AppError(404, "Player not found");
+
+  const peers = await prisma.playerStats.findMany({
+    where: {
+      player: { position: player.position },
+    },
+    include: {
+      season: true,
+      player: { select: { id: true, position: true } },
+    },
+  });
+
+  const latestStats = player.stats[0];
+  if (!latestStats) {
+    return { player, percentiles: null };
+  }
+
+  // Calcular percentil de una métrica
+  function calcPercentile(key: keyof typeof latestStats, higherIsBetter = true) {
+    const values = peers
+      .map((p) => Number(p[key as keyof typeof p]) ?? 0)
+      .filter((v) => !isNaN(v));
+
+    if (values.length === 0) return 0;
+
+    const playerValue = Number(latestStats[key]) ?? 0;
+    const below = values.filter((v) =>
+      higherIsBetter ? v <= playerValue : v >= playerValue
+    ).length;
+
+    return Math.round((below / values.length) * 100);
+  }
+
+  const percentiles = {
+    goals: calcPercentile("goals"),
+    assists: calcPercentile("assists"),
+    xG: calcPercentile("xG"),
+    xA: calcPercentile("xA"),
+    shotsOnTarget: calcPercentile("shotsOnTarget"),
+    successfulPasses: calcPercentile("successfulPasses"),
+    passAccuracy: calcPercentile("passAccuracy"),
+    aerialDuelsWon: calcPercentile("aerialDuelsWon"),
+    defensiveDuelsWon: calcPercentile("defensiveDuelsWon"),
+    recoveries: calcPercentile("recoveries"),
+    yellowCards: calcPercentile("yellowCards", false),
+    redCards: calcPercentile("redCards", false),
+  };
+
+  return { player, percentiles };
+}
