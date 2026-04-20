@@ -1,5 +1,6 @@
 import type { Player } from "../../types";
 import { useCompareStore } from "../../store/useCompareStore";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "../ui/Badge";
 
 const POSITION_COLORS: Record<string, "green" | "blue" | "purple" | "default"> = {
@@ -16,6 +17,7 @@ function getAge(dateOfBirth: string) {
 
 export function PlayerCard({ player }: { player: Player }) {
     const { addPlayer, removePlayer, isSelected, selectedPlayers } = useCompareStore();
+    const navigate = useNavigate();
     const selected = isSelected(player.id);
     const canAdd = selectedPlayers.length < 3;
     const latestStats = player.stats?.[0];
@@ -66,10 +68,19 @@ export function PlayerCard({ player }: { player: Player }) {
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                        fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4,
-                        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
-                    }}>
+                    {/* ── NOMBRE CLICKEABLE ── */}
+                    <div
+                        onClick={() => navigate(`/players/${player.id}`)}
+                        style={{
+                            fontSize: 15, fontWeight: 700, color: "var(--text)",
+                            marginBottom: 4,
+                            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                            cursor: "pointer",
+                            transition: "color 0.15s",
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = "var(--primary)")}
+                        onMouseLeave={e => (e.currentTarget.style.color = "var(--text)")}
+                    >
                         {player.firstName} {player.lastName}
                     </div>
                     <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
