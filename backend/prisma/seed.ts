@@ -13,8 +13,8 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   // ── Teams ──────────────────────────────────────────────
   const teams = await Promise.all([
-    prisma.team.upsert({ where: { id: 1 }, update: {}, create: { id: 1, name: "CA Boca Juniors", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Boca_jrs_badge.svg/200px-Boca_jrs_badge.svg.png" } }),
-    prisma.team.upsert({ where: { id: 2 }, update: {}, create: { id: 2, name: "CA River Plate", country: "Argentina", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/River_plate_logo.svg/200px-River_plate_logo.svg.png" } }),
+    prisma.team.upsert({ where: { id: 1 }, update: {}, create: { id: 1, name: "CA Boca Juniors", country: "Argentina", logoUrl: "https://tmssl.akamaized.net//images/wappen/head/189.png" } }),
+    prisma.team.upsert({ where: { id: 2 }, update: {}, create: { id: 2, name: "CA River Plate", country: "Argentina", logoUrl: "https://tmssl.akamaized.net//images/wappen/head/209.png" } }),
   ]);
 
   // ── Seasons ────────────────────────────────────────────
