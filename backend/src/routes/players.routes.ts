@@ -5,6 +5,7 @@ import {
   comparePlayers,
   getPositions,
   getNationalities,
+  getPlayerStats,
 } from "../controllers/players.controller";
 import { validate } from "../middleware/validate";
 import { playersQuerySchema, compareQuerySchema } from "../schemas/players.schema";
@@ -25,3 +26,5 @@ playersRouter.get("/nationalities", getNationalities);
 
 // GET /api/players/:id
 playersRouter.get("/:id", getPlayerById);
+
+playersRouter.get("/:id/stats", getPlayerStats);
