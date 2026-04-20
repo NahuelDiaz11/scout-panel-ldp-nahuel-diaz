@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import type { PaginatedResponse, Player, ApiResponse } from "../types";
-
+import type { PaginatedResponse, Player, ApiResponse, PlayerStatsResponse } from "../types";
 export interface PlayersFilters {
   name?: string;
   position?: string;
@@ -66,5 +65,16 @@ export function useNationalities() {
       const { data } = await api.get("/players/nationalities");
       return data;
     },
+  });
+}
+
+export function usePlayerStats(id: number) {
+  return useQuery<ApiResponse<PlayerStatsResponse>>({
+    queryKey: ["player-stats", id],
+    queryFn: async () => {
+      const { data } = await api.get(`/players/${id}/stats`);
+      return data;
+    },
+    enabled: !!id,
   });
 }

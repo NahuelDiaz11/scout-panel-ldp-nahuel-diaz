@@ -60,3 +60,23 @@ export interface ApiResponse<T> {
   data: T;
   error: null | string;
 }
+
+export interface PlayerPercentiles {
+  goals: number;
+  assists: number;
+  xG: number;
+  xA: number;
+  shotsOnTarget: number;
+  successfulPasses: number;
+  passAccuracy: number;
+  aerialDuelsWon: number;
+  defensiveDuelsWon: number;
+  recoveries: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export interface PlayerStatsResponse {
+  player: Player;
+  percentiles: PlayerPercentiles | null;
+}
