@@ -1,6 +1,6 @@
 import { useCompareStore } from "../store/useCompareStore";
 import { useComparePlayers, useSeasons } from "../hooks/usePlayers";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // Sumamos useRef
 import { RadarComparison } from "../components/players/RadarComparison";
 import { StatsTable } from "../components/players/StatsTable";
 import { SeasonBarChart } from "../components/players/SeasonBarChart";
@@ -103,6 +103,20 @@ export function ComparePage() {
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  // ── ESTADOS PARA EL EFECTO SPOTLIGHT DEL HEADER ──
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!headerRef.current) return;
+    const rect = headerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   const { data, isLoading } = useComparePlayers(ids, selectedSeason);
   const players = data?.data || [];
 
@@ -110,9 +124,7 @@ export function ComparePage() {
   const seasons = seasonsData?.data || [];
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -136,7 +148,6 @@ export function ComparePage() {
     return <div style={{ textAlign: "center", padding: 80, color: C.muted, fontFamily: "'Nunito Sans', sans-serif" }}>Loading comparison...</div>;
   }
 
-  // 3. LÓGICA DE RENDERIZADO
   const summaryRows = [
     { label: "Altura", getValue: (p: any) => p.height ?? "1.80m" },
     { label: "Pie Hábil", getValue: (p: any) => p.preferredFoot ?? "Derecho" },
@@ -149,48 +160,74 @@ export function ComparePage() {
   ];
 
   return (
-    <div style={{ fontFamily: "'Nunito Sans', sans-serif", background: C.bg, minHeight: "100vh", padding: "24px clamp(16px, 4vw, 40px)", paddingBottom: 80 }}>
+    <div style={{ fontFamily: "'Nunito Sans', sans-serif", minHeight: "100vh", padding: "24px clamp(16px, 4vw, 40px)", paddingBottom: 80 }}>
 
-      {/* ── Header VS ── */}
-      <div style={{
-        background: C.card,
-        borderBottom: `1px solid ${C.border}`,
-        padding: "24px clamp(16px, 4vw, 40px)",
-        margin: "-24px calc(-1 * clamp(16px, 4vw, 40px)) 32px calc(-1 * clamp(16px, 4vw, 40px))",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-        <div style={
-          isThreePlayers
-            ? isMobile
-              ? { display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: "100%", maxWidth: 1000 }
-              : { display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", alignItems: "center", gap: "clamp(12px, 2vw, 24px)", width: "100%", maxWidth: 1000 }
-            : { display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(16px, 4vw, 60px)", width: "100%", maxWidth: 1000, flexWrap: "wrap" }
-        }>
-          {/* Jugador 0: Cambiamos el align a dinámico */}
+      {/* ── Header VS (Con Textura y Spotlight) ── */}
+      <div 
+        ref={headerRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          position: "relative",
+          overflow: "hidden", 
+          background: C.card,
+          backgroundImage: `radial-gradient(${C.border} 1px, transparent 1px)`,
+          backgroundSize: "20px 20px",
+          borderBottom: `1px solid ${C.border}`,
+          padding: "24px clamp(16px, 4vw, 40px)",
+          margin: "-24px calc(-1 * clamp(16px, 4vw, 40px)) 32px calc(-1 * clamp(16px, 4vw, 40px))",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div 
+            style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 0,
+                opacity: isHovered ? 1 : 0,
+                transition: "opacity 0.3s ease",
+                background: `radial-gradient(
+                    1000px circle at ${mousePos.x}px ${mousePos.y}px, 
+                    rgba(0, 224, 148, 0.05), 
+                    transparent 40%
+                )`,
+                pointerEvents: "none"
+            }} 
+        />
+
+        <div style={{
+          position: "relative", zIndex: 1,
+          display: isThreePlayers && !isMobile ? "grid" : "flex",
+          flexDirection: isThreePlayers && isMobile ? "column" : "row",
+          gridTemplateColumns: isThreePlayers && !isMobile ? "1fr auto 1fr auto 1fr" : undefined,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: isThreePlayers && !isMobile ? "clamp(12px, 2vw, 24px)" : "clamp(16px, 4vw, 60px)",
+          width: "100%", maxWidth: 1000, flexWrap: "wrap"
+        }}>
+          {/* Jugador 0 */}
           {players[0] && (
             <div style={{ flex: "1 1 min-content" }}>
-              <PlayerVSHeader
-                player={players[0]}
-                align={isMobile ? "left" : "right"}
-              />
+              <PlayerVSHeader player={players[0]} align={isMobile ? "left" : "right"} />
             </div>
           )}
 
           <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
 
-          {/* Jugador 1: Siempre a la izquierda */}
+          {/* Jugador 1 */}
           {players[1] && (
             <div style={{ flex: "1 1 min-content" }}>
               <PlayerVSHeader player={players[1]} align="left" />
             </div>
           )}
 
+          {/* Jugador 2 (Si existe) */}
           {players[2] && (
             <>
               <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
-              {/* Jugador 2: Siempre a la izquierda */}
               <div style={{ flex: "1 1 min-content" }}>
                 <PlayerVSHeader player={players[2]} align="left" />
               </div>
@@ -200,52 +237,28 @@ export function ComparePage() {
       </div>
 
       {/* ── Acciones y Filtros ── */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 24,
-        gap: 16,
-        flexWrap: "wrap"
-      }}>
-        {/* Selector de Temporada */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 13, color: C.muted, fontWeight: 700 }}>Temporada:</span>
           <select
             value={selectedSeason || ""}
             onChange={(e) => setSelectedSeason(e.target.value ? Number(e.target.value) : undefined)}
             style={{
-              background: C.surface,
-              color: C.text,
-              border: `1px solid ${C.border}`,
-              padding: "8px 16px",
-              borderRadius: 6,
-              fontSize: 13,
-              fontWeight: 700,
-              outline: "none",
-              cursor: "pointer"
+              background: C.surface, color: C.text, border: `1px solid ${C.border}`,
+              padding: "8px 16px", borderRadius: 6, fontSize: 13, fontWeight: 700,
+              outline: "none", cursor: "pointer"
             }}
           >
             <option value="">Todas las temporadas</option>
-            {seasons.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
+            {seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </div>
 
         <button
           onClick={() => { clearPlayers(); navigate("/"); }}
           style={{
-            padding: "8px 16px",
-            background: "transparent",
-            border: `1px solid ${C.border}`,
-            color: C.text,
-            borderRadius: 6,
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 700
+            padding: "8px 16px", background: "transparent", border: `1px solid ${C.border}`,
+            color: C.text, borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700
           }}
         >
           Volver a la lista
