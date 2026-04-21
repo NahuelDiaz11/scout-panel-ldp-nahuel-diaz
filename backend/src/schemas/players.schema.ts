@@ -14,6 +14,7 @@ export const compareQuerySchema = z.object({
   ids: z
     .string()
     .regex(/^\d+(,\d+){1,2}$/, "Provide 2 or 3 comma-separated player IDs"),
+    seasonId: z.coerce.number().optional(),
 });
 
 export type PlayersQuery = z.infer<typeof playersQuerySchema>;

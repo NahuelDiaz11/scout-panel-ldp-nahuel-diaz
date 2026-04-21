@@ -39,8 +39,13 @@ export async function comparePlayers(
   try {
     const ids = (req.query.ids as string)
       .split(",")
-      .map((id) => parseInt(id));
-    const players = await playersService.findPlayersToCompare(ids);
+      .map((id: string) => parseInt(id));
+
+    const seasonId = req.query.seasonId
+      ? parseInt(req.query.seasonId as string)
+      : undefined;
+
+    const players = await playersService.findPlayersToCompare(ids, seasonId);
     res.json({ data: players, error: null });
   } catch (err) {
     next(err);
@@ -82,6 +87,19 @@ export async function getPlayerStats(
     const id = parseInt(req.params.id as string);
     const result = await playersService.findPlayerStats(id);
     res.json({ data: result, error: null });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getSeasons(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const seasons = await playersService.findSeasons();
+    res.json({ data: seasons, error: null });
   } catch (err) {
     next(err);
   }
