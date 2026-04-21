@@ -1,6 +1,6 @@
-import React from "react";
 import { useCompareStore } from "../store/useCompareStore";
-import { useComparePlayers } from "../hooks/usePlayers";
+import { useComparePlayers, useSeasons } from "../hooks/usePlayers";
+import { useState, useEffect } from "react";
 import { RadarComparison } from "../components/players/RadarComparison";
 import { StatsTable } from "../components/players/StatsTable";
 import { SeasonBarChart } from "../components/players/SeasonBarChart";
@@ -59,25 +59,25 @@ function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left
         <h2 style={{
           fontSize: 22, fontWeight: 800, color: C.text,
           margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: 10,
-          justifyContent: isRight ? "flex-end" : "flex-start" 
+          justifyContent: isRight ? "flex-end" : "flex-start"
         }}>
           {player.flagUrl && (
-            <img 
-              src={player.flagUrl} alt={player.nationality} 
-              style={{ width: 22, height: 16, objectFit: "cover", borderRadius: 2 }} 
-              referrerPolicy="no-referrer" 
+            <img
+              src={player.flagUrl} alt={player.nationality}
+              style={{ width: 22, height: 16, objectFit: "cover", borderRadius: 2 }}
+              referrerPolicy="no-referrer"
             />
           )}
           <span>{player.firstName} {player.lastName}</span>
         </h2>
-        
+
         <div style={{
           fontSize: 13, color: C.muted, display: "flex", alignItems: "center", gap: 8,
           justifyContent: isRight ? "flex-end" : "flex-start", flexWrap: "wrap"
         }}>
           <span style={{ color: C.primary, fontWeight: 800 }}>{player.position}</span>
           <span>|</span>
-          <span>{getAge(player.dateOfBirth)} years</span>
+          <span>{getAge(player.dateOfBirth)} años</span>
           {player.team?.name && (
             <>
               <span>|</span>
@@ -100,8 +100,24 @@ export function ComparePage() {
   const navigate = useNavigate();
   const ids = selectedPlayers.map((p) => p.id);
 
-  const { data, isLoading } = useComparePlayers(ids);
+  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const { data, isLoading } = useComparePlayers(ids, selectedSeason);
   const players = data?.data || [];
+
+  const { data: seasonsData } = useSeasons();
+  const seasons = seasonsData?.data || [];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isThreePlayers = players.length === 3;
 
   if (selectedPlayers.length < 2) {
     return (
@@ -120,46 +136,119 @@ export function ComparePage() {
     return <div style={{ textAlign: "center", padding: 80, color: C.muted, fontFamily: "'Nunito Sans', sans-serif" }}>Loading comparison...</div>;
   }
 
+  // 3. LÓGICA DE RENDERIZADO
   const summaryRows = [
-    { label: "Edad", getValue: (p: any) => `${getAge(p.dateOfBirth)} años` },
     { label: "Altura", getValue: (p: any) => p.height ?? "1.80m" },
     { label: "Pie Hábil", getValue: (p: any) => p.preferredFoot ?? "Derecho" },
     { label: "Partidos Jugados", getValue: (p: any) => p.stats?.reduce((acc: number, s: any) => acc + s.matchesPlayed, 0) || 0 },
     { label: "Goles Totales", getValue: (p: any) => p.stats?.reduce((acc: number, s: any) => acc + s.goals, 0) || 0 },
-    { 
-      label: "Valor de Mercado", 
-      getValue: (p: any) => {
-        return p.marketValue ? `€ ${(p.marketValue / 1000000).toFixed(1)}M` : "—";
-      }
+    {
+      label: "Valor de Mercado",
+      getValue: (p: any) => p.marketValue ? `€ ${(p.marketValue / 1000000).toFixed(1)}M` : "—"
     }
   ];
 
   return (
     <div style={{ fontFamily: "'Nunito Sans', sans-serif", background: C.bg, minHeight: "100vh", padding: "24px clamp(16px, 4vw, 40px)", paddingBottom: 80 }}>
-      
+
       {/* ── Header VS ── */}
       <div style={{
-        background: C.card, borderBottom: `1px solid ${C.border}`,
+        background: C.card,
+        borderBottom: `1px solid ${C.border}`,
         padding: "24px clamp(16px, 4vw, 40px)",
         margin: "-24px calc(-1 * clamp(16px, 4vw, 40px)) 32px calc(-1 * clamp(16px, 4vw, 40px))",
-        display: "flex", alignItems: "center", justifyContent: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(16px, 4vw, 60px)", width: "100%", maxWidth: 1000, flexWrap: "wrap" }}>
-          {players[0] && <div style={{ flex: "1 1 min-content" }}><PlayerVSHeader player={players[0]} align="right" /></div>}
-          <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20, flexShrink: 0 }}>VS</div>
-          {players[1] && <div style={{ flex: "1 1 min-content" }}><PlayerVSHeader player={players[1]} align="left" /></div>}
+        <div style={
+          isThreePlayers
+            ? isMobile
+              ? { display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: "100%", maxWidth: 1000 }
+              : { display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", alignItems: "center", gap: "clamp(12px, 2vw, 24px)", width: "100%", maxWidth: 1000 }
+            : { display: "flex", alignItems: "center", justifyContent: "center", gap: "clamp(16px, 4vw, 60px)", width: "100%", maxWidth: 1000, flexWrap: "wrap" }
+        }>
+          {/* Jugador 0: Cambiamos el align a dinámico */}
+          {players[0] && (
+            <div style={{ flex: "1 1 min-content" }}>
+              <PlayerVSHeader
+                player={players[0]}
+                align={isMobile ? "left" : "right"}
+              />
+            </div>
+          )}
+
+          <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
+
+          {/* Jugador 1: Siempre a la izquierda */}
+          {players[1] && (
+            <div style={{ flex: "1 1 min-content" }}>
+              <PlayerVSHeader player={players[1]} align="left" />
+            </div>
+          )}
+
           {players[2] && (
             <>
-              <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20, flexShrink: 0 }}>VS</div>
-              <div style={{ flex: "1 1 min-content" }}><PlayerVSHeader player={players[2]} align="left" /></div>
+              <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
+              {/* Jugador 2: Siempre a la izquierda */}
+              <div style={{ flex: "1 1 min-content" }}>
+                <PlayerVSHeader player={players[2]} align="left" />
+              </div>
             </>
           )}
         </div>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-        <button onClick={() => { clearPlayers(); navigate("/"); }} style={{ padding: "8px 16px", background: "transparent", border: `1px solid ${C.border}`, color: C.text, borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700 }}>
-          Back to list
+      {/* ── Acciones y Filtros ── */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 24,
+        gap: 16,
+        flexWrap: "wrap"
+      }}>
+        {/* Selector de Temporada */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 13, color: C.muted, fontWeight: 700 }}>Temporada:</span>
+          <select
+            value={selectedSeason || ""}
+            onChange={(e) => setSelectedSeason(e.target.value ? Number(e.target.value) : undefined)}
+            style={{
+              background: C.surface,
+              color: C.text,
+              border: `1px solid ${C.border}`,
+              padding: "8px 16px",
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              outline: "none",
+              cursor: "pointer"
+            }}
+          >
+            <option value="">Todas las temporadas</option>
+            {seasons.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          onClick={() => { clearPlayers(); navigate("/"); }}
+          style={{
+            padding: "8px 16px",
+            background: "transparent",
+            border: `1px solid ${C.border}`,
+            color: C.text,
+            borderRadius: 6,
+            cursor: "pointer",
+            fontSize: 13,
+            fontWeight: 700
+          }}
+        >
+          Volver a la lista
         </button>
       </div>
 
@@ -226,7 +315,7 @@ export function ComparePage() {
             Comparación de Atributos
           </div>
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-             <RadarComparison players={players} colors={PLAYER_COLORS} />
+            <RadarComparison players={players} colors={PLAYER_COLORS} />
           </div>
         </div>
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "24px", display: "flex", flexDirection: "column" }}>
@@ -235,9 +324,9 @@ export function ComparePage() {
             Evolución por Temporada (Goles / Asistencias)
           </div>
           <div style={{ flex: 1, overflowX: "auto", width: "100%", display: "flex", alignItems: "center" }}>
-             <div style={{ minWidth: 400, width: "100%" }}>
-               <SeasonBarChart players={players} colors={PLAYER_COLORS} />
-             </div>
+            <div style={{ minWidth: 400, width: "100%" }}>
+              <SeasonBarChart players={players} colors={PLAYER_COLORS} />
+            </div>
           </div>
         </div>
       </div>
