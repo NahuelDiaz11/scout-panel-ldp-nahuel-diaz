@@ -12,8 +12,10 @@ const C = {
 };
 
 export function PlayerCard({ player }: { player: Player }) {
-    const { addPlayer, removePlayer, isSelected } = useCompareStore();
+    const { addPlayer, removePlayer, isSelected, selectedPlayers} = useCompareStore();
     const selected = isSelected(player.id);
+
+    const isDisabled = !selected && selectedPlayers.length >= 3;
 
     const cardRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -144,6 +146,7 @@ export function PlayerCard({ player }: { player: Player }) {
 
             {/* ── BOTÓN COMPARAR ── */}
             <button
+                disabled={isDisabled}
                 onClick={(e) => {
                     e.preventDefault();
                     selected ? removePlayer(player.id) : addPlayer(player);
@@ -153,9 +156,9 @@ export function PlayerCard({ player }: { player: Player }) {
                     background: selected ? "rgba(232, 64, 64, 0.1)" : "rgba(0, 224, 148, 0.1)",
                     color: selected ? "#E84040" : C.primary,
                     border: `1px solid ${selected ? "rgba(232, 64, 64, 0.2)" : "rgba(0, 224, 148, 0.2)"}`,
-                    borderRadius: 8, fontSize: 13, fontWeight: 800, cursor: "pointer",
+                    borderRadius: 8, fontSize: 13, fontWeight: 800, cursor: isDisabled ? "not-allowed" : "pointer",
                     transition: "all 0.2s", zIndex: 1, textTransform: "uppercase",
-                    position: "relative" // Asegura que esté clickeable sobre el spotlight
+                    position: "relative" 
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.background = selected ? "rgba(232, 64, 64, 0.2)" : "rgba(0, 224, 148, 0.2)"}
                 onMouseLeave={(e) => e.currentTarget.style.background = selected ? "rgba(232, 64, 64, 0.1)" : "rgba(0, 224, 148, 0.1)"}
