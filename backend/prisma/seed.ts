@@ -34,32 +34,32 @@ async function main() {
 
 
   // ── Players
-  const playersData = [
+const playersData = [
     // --- BOCA JUNIORS (IDs 1-11) ---
-    { id: 1, firstName: "Leandro", lastName: "Brey", dob: "2002-09-21", nationality: "Argentina", position: "GK", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/982633-1739888426.jpg?lm=1" },
-    { id: 2, firstName: "Marcelo", lastName: "Weigandt", dob: "2000-01-11", nationality: "Argentina", position: "RB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/491690-1740775551.jpg?lm=1" },
-    { id: 3, firstName: "Lautaro", lastName: "Di Lollo", dob: "2004-03-10", nationality: "Argentina", position: "CB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1019744-1739889666.jpg?lm=1" },
-    { id: 4, firstName: "Ayrton", lastName: "Costa", dob: "1999-07-12", nationality: "Argentina", position: "CB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/842910-1739889633.jpg?lm=1" },
-    { id: 5, firstName: "Lautaro", lastName: "Blanco", dob: "1999-02-19", nationality: "Argentina", position: "LB", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/831161-1739896785.jpg?lm=1" },
-    { id: 6, firstName: "Santiago", lastName: "Ascacíbar", dob: "1997-02-25", nationality: "Argentina", position: "CDM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/423436-1739827128.jpg?lm=1" },
-    { id: 7, firstName: "Ander", lastName: "Herrera", dob: "1989-08-14", nationality: "España", position: "CM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/99343-1709675915.png?lm=1" },
-    { id: 8, firstName: "Milton", lastName: "Delgado", dob: "2005-06-16", nationality: "Argentina", position: "CM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1236677-1739899248.jpg?lm=1" },
-    { id: 9, firstName: "Tomás", lastName: "Belmonte", dob: "1998-05-27", nationality: "Argentina", position: "CAM", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/483446-1739897240.jpg?lm=1" },
-    { id: 10, firstName: "Milton", lastName: "Giménez", dob: "1996-08-12", nationality: "Argentina", position: "CF", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/730779-1739899590.jpg?lm=1" },
-    { id: 11, firstName: "Exequiel", lastName: "Zeballos", dob: "2002-04-24", nationality: "Argentina", position: "LW", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/661132-1739899419.jpg?lm=1" },
+    { id: 1, firstName: "Leandro", lastName: "Brey", dob: "2002-09-21", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "GK", height: "1.91m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/982633-1739888426.jpg?lm=1", marketValue: 2000000 },
+    { id: 2, firstName: "Marcelo", lastName: "Weigandt", dob: "2000-01-11", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "RB", height: "1.75m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/491690-1740775551.jpg?lm=1", marketValue: 2500000 },
+    { id: 3, firstName: "Lautaro", lastName: "Di Lollo", dob: "2004-03-10", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CB", height: "1.89m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1019744-1739889666.jpg?lm=1", marketValue: 1000000 },
+    { id: 4, firstName: "Ayrton", lastName: "Costa", dob: "1999-07-12", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CB", height: "1.80m", preferredFoot: "Izquierdo", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/842910-1739889633.jpg?lm=1", marketValue: 2000000 },
+    { id: 5, firstName: "Lautaro", lastName: "Blanco", dob: "1999-02-19", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "LB", height: "1.76m", preferredFoot: "Izquierdo", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/831161-1739896785.jpg?lm=1", marketValue: 4500000 },
+    { id: 6, firstName: "Santiago", lastName: "Ascacíbar", dob: "1997-02-25", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CDM", height: "1.68m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/423436-1739827128.jpg?lm=1", marketValue: 5500000 },
+    { id: 7, firstName: "Ander", lastName: "Herrera", dob: "1989-08-14", nationality: "España", flagUrl: "https://img.sofascore.com/api/v1/country/ES/flag", position: "CM", height: "1.82m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/99343-1709675915.png?lm=1", marketValue: 2000000 },
+    { id: 8, firstName: "Milton", lastName: "Delgado", dob: "2005-06-16", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CM", height: "1.74m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/1236677-1739899248.jpg?lm=1", marketValue: 800000 },
+    { id: 9, firstName: "Tomás", lastName: "Belmonte", dob: "1998-05-27", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CAM", height: "1.78m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/483446-1739897240.jpg?lm=1", marketValue: 4000000 },
+    { id: 10, firstName: "Milton", lastName: "Giménez", dob: "1996-08-12", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CF", height: "1.84m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/730779-1739899590.jpg?lm=1", marketValue: 3500000 },
+    { id: 11, firstName: "Exequiel", lastName: "Zeballos", dob: "2002-04-24", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "LW", height: "1.74m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/661132-1739899419.jpg?lm=1", marketValue: 6500000 },
 
     // --- RIVER PLATE (IDs 12-22) ---
-    { id: 12, firstName: "Santiago", lastName: "Beltrán", dob: "2004-10-21", nationality: "Argentina", position: "GK", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1138089-1762437740.png?lm=1" },
-    { id: 13, firstName: "Gonzalo", lastName: "Montiel", dob: "1997-01-01", nationality: "Argentina", position: "RB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/402733-1762437910.png?lm=1" },
-    { id: 14, firstName: "Lucas", lastName: "Martínez Quarta", dob: "1996-05-10", nationality: "Argentina", position: "CB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/373373-1762437997.png?lm=1" },
-    { id: 15, firstName: "Lautaro", lastName: "Rivero", dob: "2003-11-01", nationality: "Argentina", position: "CB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1261395-1762437856.png?lm=1" },
-    { id: 16, firstName: "Marcos", lastName: "Acuña", dob: "1991-10-28", nationality: "Argentina", position: "LB", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/60410-1762438025.png?lm=1" },
-    { id: 17, firstName: "Aníbal", lastName: "Moreno", dob: "1999-05-13", nationality: "Argentina", position: "CDM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/642758-1746577695.jpg?lm=1" },
-    { id: 18, firstName: "Giuliano", lastName: "Galoppo", dob: "1999-06-18", nationality: "Argentina", position: "CM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/567249-1762438415.png?lm=1" },
-    { id: 19, firstName: "Tomás", lastName: "Galván", dob: "2000-04-11", nationality: "Argentina", position: "CAM", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/893850-1727449987.jpg?lm=1" },
-    { id: 20, firstName: "Joaquín", lastName: "Freitas", dob: "2005-02-14", nationality: "Argentina", position: "RW", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1324003-1771857419.jpg?lm=1" },
-    { id: 21, firstName: "Facundo", lastName: "Colidio", dob: "2000-01-04", nationality: "Argentina", position: "LW", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/491705-1693315193.png?lm=1" },
-    { id: 22, firstName: "Maximiliano", lastName: "Salas", dob: "1997-12-01", nationality: "Argentina", position: "CF", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/442231-1762438527.png?lm=1" },
+    { id: 12, firstName: "Santiago", lastName: "Beltrán", dob: "2004-10-21", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "GK", height: "1.89m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1138089-1762437740.png?lm=1", marketValue: 500000 },
+    { id: 13, firstName: "Gonzalo", lastName: "Montiel", dob: "1997-01-01", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "RB", height: "1.75m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/402733-1762437910.png?lm=1", marketValue: 8000000 },
+    { id: 14, firstName: "Lucas", lastName: "Martínez Quarta", dob: "1996-05-10", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CB", height: "1.83m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/373373-1762437997.png?lm=1", marketValue: 10000000 },
+    { id: 15, firstName: "Lautaro", lastName: "Rivero", dob: "2003-11-01", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CB", height: "1.85m", preferredFoot: "Izquierdo", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1261395-1762437856.png?lm=1", marketValue: 1200000 },
+    { id: 16, firstName: "Marcos", lastName: "Acuña", dob: "1991-10-28", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "LB", height: "1.72m", preferredFoot: "Izquierdo", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/60410-1762438025.png?lm=1", marketValue: 4000000 },
+    { id: 17, firstName: "Aníbal", lastName: "Moreno", dob: "1999-05-13", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CDM", height: "1.78m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/642758-1746577695.jpg?lm=1", marketValue: 8500000 },
+    { id: 18, firstName: "Giuliano", lastName: "Galoppo", dob: "1999-06-18", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CM", height: "1.79m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/567249-1762438415.png?lm=1", marketValue: 6000000 },
+    { id: 19, firstName: "Tomás", lastName: "Galván", dob: "2000-04-11", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CAM", height: "1.74m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/893850-1727449987.jpg?lm=1", marketValue: 2500000 },
+    { id: 20, firstName: "Joaquín", lastName: "Freitas", dob: "2005-02-14", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "RW", height: "1.77m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/1324003-1771857419.jpg?lm=1", marketValue: 1500000 },
+    { id: 21, firstName: "Facundo", lastName: "Colidio", dob: "2000-01-04", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "LW", height: "1.79m", preferredFoot: "Derecho", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/491705-1693315193.png?lm=1", marketValue: 5000000 },
+    { id: 22, firstName: "Maximiliano", lastName: "Salas", dob: "1997-12-01", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "CF", height: "1.75m", preferredFoot: "Izquierdo", teamId: 2, photo: "https://img.a.transfermarkt.technology/portrait/header/442231-1762438527.png?lm=1", marketValue: 3000000 },
   ];
 
   for (const p of playersData) {
@@ -70,21 +70,123 @@ async function main() {
         lastName: p.lastName,
         dateOfBirth: new Date(p.dob),
         nationality: p.nationality,
+        flagUrl: p.flagUrl,
         position: p.position,
         photoUrl: p.photo,
+        height: p.height,              
+        preferredFoot: p.preferredFoot,
+        marketValue: p.marketValue,
         teamId: p.teamId,
       },
       create: {
-        id: p.id,
         firstName: p.firstName,
         lastName: p.lastName,
         dateOfBirth: new Date(p.dob),
         nationality: p.nationality,
+        flagUrl: p.flagUrl,
         position: p.position,
         photoUrl: p.photo,
+        height: p.height,             
+        preferredFoot: p.preferredFoot,
+        marketValue: p.marketValue,
         teamId: p.teamId,
       },
     });
+  }
+
+  // Función para generar Heatmaps
+  function heatmapByPosition(position: string): number[][] {
+    const grids: Record<string, number[][]> = {
+      CF: [
+        [10, 25, 95, 25, 10],
+        [5, 15, 60, 15, 5],
+        [2, 8, 20, 8, 2],
+        [0, 2, 5, 2, 0],
+        [0, 0, 0, 0, 0],
+      ],
+
+      SS: [
+        [5, 15, 50, 15, 5],
+        [15, 40, 85, 40, 15],
+        [10, 25, 60, 25, 10],
+        [2, 5, 15, 5, 2],
+        [0, 0, 0, 0, 0],
+      ],
+
+      LW: [
+        [90, 40, 10, 2, 1],
+        [75, 30, 5, 0, 0],
+        [40, 15, 2, 0, 0],
+        [15, 5, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+      ],
+
+      RW: [
+        [1, 2, 10, 40, 90],
+        [0, 0, 5, 30, 75],
+        [0, 0, 2, 15, 40],
+        [0, 0, 0, 5, 15],
+        [0, 0, 0, 0, 0],
+      ],
+
+      CAM: [
+        [5, 10, 25, 10, 5],
+        [20, 55, 90, 55, 20],
+        [15, 45, 75, 45, 15],
+        [5, 10, 20, 10, 5],
+        [1, 2, 5, 2, 1],
+      ],
+
+      CM: [
+        [5, 10, 20, 10, 5],
+        [10, 30, 55, 30, 10],
+        [15, 50, 85, 50, 15],
+        [10, 30, 55, 30, 10],
+        [5, 10, 20, 10, 5],
+      ],
+
+      CDM: [
+        [0, 1, 5, 1, 0],
+        [5, 10, 25, 10, 5],
+        [15, 40, 70, 40, 15],
+        [30, 65, 95, 65, 30],
+        [20, 45, 80, 45, 20],
+      ],
+
+      LB: [
+        [40, 10, 2, 0, 0],
+        [65, 15, 0, 0, 0],
+        [80, 25, 2, 0, 0],
+        [95, 35, 5, 0, 0],
+        [70, 20, 0, 0, 0],
+      ],
+
+      RB: [
+        [0, 0, 2, 10, 40],
+        [0, 0, 0, 15, 65],
+        [0, 0, 2, 25, 80],
+        [0, 0, 5, 35, 95],
+        [0, 0, 0, 20, 70],
+      ],
+
+      CB: [
+        [0, 2, 5, 2, 0],
+        [1, 5, 15, 5, 1],
+        [10, 30, 55, 30, 10],
+        [35, 60, 95, 60, 35],
+        [25, 50, 85, 50, 25],
+      ],
+
+      GK: [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 2, 0, 0],
+        [5, 10, 35, 10, 5],
+        [15, 40, 98, 40, 15],
+      ],
+    };
+
+    return grids[position] ?? grids["CM"];
   }
 
   // ── Stats (Generamos para los 22) ────────────────────────
@@ -106,7 +208,8 @@ async function main() {
     defensiveDuelsTotal: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 150 : 40,
     xG: ["CF", "RW", "LW"].includes(p.position) ? 9.5 : 1.2,
     xA: ["CAM", "RW", "LW"].includes(p.position) ? 5.5 : 1.0,
-    recoveries: ["CB", "CDM"].includes(p.position) ? 150 : 40
+    recoveries: ["CB", "CDM"].includes(p.position) ? 150 : 40,
+    heatmapGrid: heatmapByPosition(p.position)
   }));
 
   for (const s of statsData) {

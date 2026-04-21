@@ -30,6 +30,7 @@ export interface PlayerStats {
   xG: number;
   xA: number;
   recoveries: number;
+  heatmapGrid: number[][] | null;
 }
 
 export interface Player {
@@ -43,6 +44,10 @@ export interface Player {
   teamId: number | null;
   team: Team | null;
   stats: PlayerStats[];
+  flagUrl?: string | null;
+  height?: number | null;
+  preferredFoot?: string | null;
+  marketValue?: number | null;
 }
 
 export interface PaginatedResponse<T> {

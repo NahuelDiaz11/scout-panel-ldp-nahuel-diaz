@@ -15,6 +15,12 @@ function getAge(dateOfBirth: string) {
     return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 }
 
+// formatear el dinero a "€ X.XM"
+function formatMarketValue(value: number | null | undefined) {
+    if (!value) return "—";
+    return `€ ${(value / 1000000).toFixed(1)}M`;
+}
+
 export function PlayerCard({ player }: { player: Player }) {
     const { addPlayer, removePlayer, isSelected, selectedPlayers } = useCompareStore();
     const navigate = useNavigate();
@@ -42,8 +48,10 @@ export function PlayerCard({ player }: { player: Player }) {
             onMouseEnter={e => (e.currentTarget.style.borderColor = selected ? "var(--primary)" : "var(--border-hover)")}
             onMouseLeave={e => (e.currentTarget.style.borderColor = selected ? "var(--primary)" : "var(--border)")}
         >
-            {/* Header */}
+            {/* ── HEADER DE LA TARJETA ── */}
             <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                
+                {/* Foto del jugador */}
                 <div style={{
                     width: 52, height: 52, borderRadius: "var(--radius-md)",
                     background: "var(--bg-hover)", overflow: "hidden", flexShrink: 0,
@@ -54,6 +62,7 @@ export function PlayerCard({ player }: { player: Player }) {
                             src={player.photoUrl}
                             alt={`${player.firstName} ${player.lastName}`}
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            referrerPolicy="no-referrer"
                         />
                     ) : (
                         <div style={{
@@ -68,21 +77,36 @@ export function PlayerCard({ player }: { player: Player }) {
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* ── NOMBRE CLICKEABLE ── */}
+                    
+                    {/* Bandera + Nombre */}
                     <div
                         onClick={() => navigate(`/players/${player.id}`)}
                         style={{
+                            display: "flex", alignItems: "center", gap: 6,
+                            marginBottom: 4, cursor: "pointer",
+                        }}
+                    >
+                        {player.flagUrl && (
+                            <img
+                                src={player.flagUrl}
+                                alt={player.nationality}
+                                style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 2 }}
+                                referrerPolicy="no-referrer"
+                            />
+                        )}
+                        <span style={{
                             fontSize: 15, fontWeight: 700, color: "var(--text)",
-                            marginBottom: 4,
                             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                            cursor: "pointer",
                             transition: "color 0.15s",
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "var(--primary)")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "var(--text)")}
-                    >
-                        {player.firstName} {player.lastName}
+                            onMouseEnter={e => (e.currentTarget.style.color = "var(--primary)")}
+                            onMouseLeave={e => (e.currentTarget.style.color = "var(--text)")}
+                        >
+                            {player.firstName} {player.lastName}
+                        </span>
                     </div>
+
+                    {/* Posición y Edad */}
                     <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
                         <Badge color={POSITION_COLORS[player.position] || "default"}>
                             {player.position}
@@ -94,17 +118,17 @@ export function PlayerCard({ player }: { player: Player }) {
                 </div>
             </div>
 
-            {/* Team */}
+            {/* ── EQUIPO ── */}
             {player.team && (
                 <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 6 }}>
                     {player.team.logoUrl && (
-                        <img src={player.team.logoUrl} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} />
+                        <img src={player.team.logoUrl} alt="" style={{ width: 16, height: 16, objectFit: "contain" }} referrerPolicy="no-referrer" />
                     )}
                     {player.team.name}
                 </div>
             )}
 
-            {/* Stats */}
+            {/* ── ESTADÍSTICAS BÁSICAS ── */}
             {latestStats && (
                 <div style={{
                     display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
@@ -127,12 +151,17 @@ export function PlayerCard({ player }: { player: Player }) {
                 </div>
             )}
 
-            {/* Nationality */}
-            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                {player.nationality}
+            {/* ── VALOR DE MERCADO ── */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                 <span style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                     Valor de Mercado
+                 </span>
+                 <span style={{ fontSize: 14, fontWeight: 800, color: "var(--text)" }}>
+                     {formatMarketValue(player.marketValue)}
+                 </span>
             </div>
 
-            {/* Compare button */}
+            {/* ── BOTÓN COMPARAR ── */}
             <button
                 onClick={handleCompare}
                 disabled={!selected && !canAdd}

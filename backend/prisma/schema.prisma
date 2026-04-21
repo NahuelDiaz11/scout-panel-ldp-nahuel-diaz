@@ -23,11 +23,15 @@ model Player {
   lastName    String
   dateOfBirth DateTime
   nationality String
-  position    String   // SS, CF, CAM, CM, CB, LB, RB, GK
+  flagUrl     String?
+  position    String  
   photoUrl    String?
   teamId      Int?
   team        Team?    @relation(fields: [teamId], references: [id])
   stats       PlayerStats[]
+  height        String?
+  preferredFoot String?
+  marketValue   Int?
   shortlists  ShortlistPlayer[]
   createdAt   DateTime @default(now())
 
@@ -69,6 +73,7 @@ model PlayerStats {
   xG               Float   @default(0) // Expected Goals
   xA               Float   @default(0) // Expected Assists
   recoveries       Int     @default(0)
+  heatmapGrid      Json?
 
   @@unique([playerId, seasonId])
   @@index([playerId])
