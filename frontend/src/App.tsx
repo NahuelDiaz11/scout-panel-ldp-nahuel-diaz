@@ -1,16 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import { Layout } from "./components/layout/Layout";
 import { PlayersPage } from "./pages/PlayersPage";
 import { ComparePage } from "./pages/ComparePage";
 import { PlayerProfilePage } from "./pages/PlayerProfilePage";
+import { ProtectedRoute } from "./components/layout/ProtectedRoute";
+import { LoginPage } from "./pages/LoginPage";
+import { Layout } from "./components/layout/Layout";
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<PlayersPage />} />
-        <Route path="compare" element={<ComparePage />} />
-        <Route path="players/:id" element={<PlayerProfilePage />} />
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route index element={<PlayersPage />} />
+          <Route path="compare" element={<ComparePage />} />
+          <Route path="players/:id" element={<PlayerProfilePage />} />
+        </Route>
+
       </Route>
     </Routes>
   );

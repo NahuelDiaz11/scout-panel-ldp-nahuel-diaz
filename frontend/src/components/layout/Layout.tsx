@@ -4,7 +4,7 @@ import { CompareBar } from "../players/CompareBar";
 
 export function Layout() {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#0F0F0F" }}>
       <Navbar />
       <main style={{ flex: 1, padding: "24px 32px", maxWidth: 1400, margin: "0 auto", width: "100%" }}>
         <Outlet />
