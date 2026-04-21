@@ -4,24 +4,33 @@ import type { PlayersFilters } from "../hooks/usePlayers";
 import { PlayerCard } from "../components/players/PlayerCard";
 import { PlayerFilters } from "../components/players/PlayerFilters";
 import { Skeleton } from "../components/ui/Skeleton";
+import { Binoculars, Users } from "lucide-react";
 
 function PlayerCardSkeleton() {
     return (
         <div style={{
             background: "var(--bg-card)", border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg)", padding: 16, display: "flex",
-            flexDirection: "column", gap: 12,
+            borderRadius: "var(--radius-lg)", padding: "20px 16px", display: "flex",
+            flexDirection: "column", alignItems: "center", gap: 16,
+            height: 380,
         }}>
-            <div style={{ display: "flex", gap: 12 }}>
-                <Skeleton width={52} height={52} borderRadius="var(--radius-md)" />
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                    <Skeleton height={16} width="70%" />
-                    <Skeleton height={12} width="40%" />
+            <div style={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <Skeleton width={30} height={24} />
+                    <Skeleton width={20} height={16} />
                 </div>
+                <Skeleton width={100} height={100} borderRadius="50%" />
+                <div style={{ width: 30 }} />
             </div>
-            <Skeleton height={12} width="50%" />
-            <Skeleton height={48} />
-            <Skeleton height={32} />
+            <Skeleton height={24} width="70%" />
+            <div style={{ width: "100%", height: 1, background: "var(--border)" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 24px", width: "100%" }}>
+                <Skeleton height={16} /><Skeleton height={16} />
+                <Skeleton height={16} /><Skeleton height={16} />
+            </div>
+            <div style={{ marginTop: "auto", width: "100%" }}>
+                <Skeleton height={36} />
+            </div>
         </div>
     );
 }
@@ -40,11 +49,44 @@ export function PlayersPage() {
     const meta = data?.meta;
 
     return (
-        <div style={{ paddingBottom: 80 }}>
-            <div style={{ marginBottom: 24 }}>
-                <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Jugadores</h1>
-                <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
-                    {meta ? `${meta.total} jugadores encontrados` : "Buscando jugadores..."}
+        <div style={{ paddingBottom: 80, fontFamily: "'Nunito Sans', sans-serif" }}>
+
+            <div style={{ marginBottom: 32, display: "flex", flexDirection: "column", gap: 12 }}>
+
+                {/* Badge Verde */}
+                <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    background: "rgba(0, 224, 148, 0.1)", color: "#00E094",
+                    padding: "6px 12px", borderRadius: 100, width: "fit-content",
+                    fontSize: 12, fontWeight: 800, letterSpacing: 0.5, textTransform: "uppercase",
+                    border: "1px solid rgba(0, 224, 148, 0.2)"
+                }}>
+                    <Binoculars size={14} strokeWidth={2.5} />
+                    LDP Scout Panel
+                </div>
+
+                {/* Título Principal */}
+                <h1 style={{
+                    fontSize: "clamp(28px, 4vw, 36px)",
+                    fontWeight: 900,
+                    color: "#F2F2F2",
+                    margin: 0,
+                    letterSpacing: "-0.5px"
+                }}>
+                    Listado de Jugadores
+                </h1>
+
+                {/* Subtítulo / Contador Dinámico */}
+                <p style={{
+                    fontSize: 15, color: "#8C8C8C", margin: 0,
+                    display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap"
+                }}>
+                    <Users size={16} />
+                    Explora y compara entre
+                    <span style={{ color: "#F2F2F2", fontWeight: 800 }}>
+                        {meta ? meta.total : "..."}
+                    </span>
+                    perfiles profesionales.
                 </p>
             </div>
 
@@ -101,12 +143,14 @@ export function PlayersPage() {
                         style={{
                             padding: "8px 16px", fontSize: 13, fontWeight: 600,
                             border: "1px solid var(--border)", borderRadius: "var(--radius-sm)",
+                            background: "transparent",
                             color: "var(--text-muted)", opacity: (filters.page || 1) <= 1 ? 0.4 : 1,
+                            cursor: (filters.page || 1) <= 1 ? "not-allowed" : "pointer"
                         }}
                     >
                         Anterior
                     </button>
-                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                    <span style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 700 }}>
                         Página {filters.page} de {meta.totalPages}
                     </span>
                     <button
@@ -115,8 +159,10 @@ export function PlayersPage() {
                         style={{
                             padding: "8px 16px", fontSize: 13, fontWeight: 600,
                             border: "1px solid var(--border)", borderRadius: "var(--radius-sm)",
+                            background: "transparent",
                             color: "var(--text-muted)",
                             opacity: (filters.page || 1) >= meta.totalPages ? 0.4 : 1,
+                            cursor: (filters.page || 1) >= meta.totalPages ? "not-allowed" : "pointer"
                         }}
                     >
                         Siguiente

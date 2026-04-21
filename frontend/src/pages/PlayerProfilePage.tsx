@@ -5,6 +5,7 @@ import { StatCircle } from "../components/players/StatCircle";
 import { PlayerStatsTable } from "../components/players/PlayerStatsTable";
 import HeatmapField from "../components/players/HeatmapField";
 import { RadarComparison } from "../components/players/RadarComparison";
+import { useState, useRef } from "react";
 
 const C = {
     bg: "#0F0F0F",
@@ -26,7 +27,20 @@ export function PlayerProfilePage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
-    // jugador + percentiles
+    // ── ESTADOS PARA EL EFECTO SPOTLIGHT EN EL HEADER ──
+    const heroRef = useRef<HTMLDivElement>(null);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!heroRef.current) return;
+        const rect = heroRef.current.getBoundingClientRect();
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
+
     const { data, isLoading, isError } = usePlayerStats(Number(id));
     const { addPlayer, removePlayer, isSelected, selectedPlayers } = useCompareStore();
 
@@ -78,14 +92,45 @@ export function PlayerProfilePage() {
     return (
         <div style={{ fontFamily: "'Nunito Sans', sans-serif", paddingBottom: 80 }}>
 
-            {/* ── 1. HERO HEADER (Responsive) ── */}
-            <div style={{
-                background: C.card, border: `1px solid ${C.border}`, borderRadius: 12,
-                padding: "24px 32px", marginBottom: 24, display: "flex", 
-                alignItems: "center", justifyContent: "space-between", gap: 24,
-                flexWrap: "wrap"
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+            <div 
+                ref={heroRef}
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                style={{
+                    position: "relative",
+                    overflow: "hidden", 
+                    backgroundColor: C.card,
+                    backgroundImage: `radial-gradient(${C.border} 1px, transparent 1px)`,
+                    backgroundSize: "20px 20px",
+                    border: `1px solid ${C.border}`, 
+                    borderRadius: 12,
+                    padding: "24px 32px", 
+                    marginBottom: 24, 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "space-between", 
+                    gap: 24,
+                    flexWrap: "wrap"
+                }}
+            >
+                <div 
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        zIndex: 0,
+                        opacity: isHovered ? 1 : 0,
+                        transition: "opacity 0.3s ease",
+                        background: `radial-gradient(
+                            800px circle at ${mousePos.x}px ${mousePos.y}px, 
+                            rgba(0, 224, 148, 0.06), 
+                            transparent 50%
+                        )`,
+                        pointerEvents: "none"
+                    }} 
+                />
+
+                <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
                     <button
                         onClick={() => navigate("/")}
                         style={{
@@ -129,13 +174,13 @@ export function PlayerProfilePage() {
                             <span style={{ background: "var(--primary-dim, rgba(0,224,148,0.12))", color: C.primary, padding: "2px 8px", borderRadius: 99, fontWeight: 700, fontSize: 12 }}>
                                 {player.position}
                             </span>
-                            <span style={{ color: C.muted }}>{getAge(player.dateOfBirth)} years</span>
+                            <span style={{ color: C.muted }}>{getAge(player.dateOfBirth)} años</span>
                             <span style={{ color: C.muted }}>Professional</span>
                         </div>
                     </div>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
                     {player.team && (
                         <div style={{ 
                             background: C.surface, border: `1px solid ${C.border}`, 
@@ -169,7 +214,7 @@ export function PlayerProfilePage() {
                             opacity: !selected && !canAdd ? 0.4 : 1, transition: "all 0.15s",
                         }}
                     >
-                        {selected ? "Remove from compare" : "Compare"}
+                        {selected ? "Sacar de Comparación" : "Comparar"}
                     </button>
                 </div>
             </div>
@@ -185,7 +230,7 @@ export function PlayerProfilePage() {
                     <div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
                             <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />
-                            Player information
+                            Información General
                         </div>
                         {[
                             { label: "Edad", value: `${getAge(player.dateOfBirth)} años` },
@@ -207,7 +252,6 @@ export function PlayerProfilePage() {
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
                             <span style={{ color: C.muted }}>Valor Transfermarkt</span>
-                            {/* ACÁ ACTUALIZAMOS EL VALOR */}
                             <span style={{ color: C.text, fontWeight: 700, fontSize: 16 }}>
                                 {player.marketValue ? `€ ${(player.marketValue / 1000000).toFixed(1)}M` : "—"}
                             </span>
@@ -261,7 +305,7 @@ export function PlayerProfilePage() {
                 <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, display: "flex", flexDirection: "column" }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />
-                        Total Actions (Heatmap)
+                        Mapa de Calor
                     </div>
                     <div style={{ display: "flex", justifyContent: "center", flex: 1, alignItems: "center", width: "100%", overflowX: "auto" }}>
                         <HeatmapField grid={safeGrid} width={880} height={480} />
@@ -274,7 +318,7 @@ export function PlayerProfilePage() {
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />
-                        Statistics
+                        Estadisticas
                     </span>
                     <span style={{ fontSize: 11, color: C.muted }}>{latestStats?.season.name} · Liga Profesional</span>
                 </div>
@@ -295,7 +339,7 @@ export function PlayerProfilePage() {
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}>
                     <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />
-                    Stats by season
+                    Estadisticas por Temporada
                 </div>
                 <div style={{ overflowX: "auto" }}>
                     <PlayerStatsTable stats={player.stats} />
