@@ -17,3 +17,19 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         next(error);
     }
 }
+
+export async function register(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            throw new AppError(400, "Nombre, email y contraseña son requeridos");
+        }
+
+        const result = await AuthService.register(name, email, password);
+
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
