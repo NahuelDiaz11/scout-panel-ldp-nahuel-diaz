@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { api } from "../lib/api";
 
@@ -66,6 +66,12 @@ export function LoginPage() {
           <p style={{ color: C.muted, fontSize: 14, margin: 0 }}>
             Ingresa tus credenciales para acceder al panel
           </p>
+        </div>
+        <div style={{ marginTop: 24, textAlign: "center", fontSize: 14, color: "#8C8C8C" }}>
+          ¿No tienes una cuenta?{" "}
+          <Link to="/register" style={{ color: "#00E094", fontWeight: 700, textDecoration: "none" }}>
+            Regístrate acá
+          </Link>
         </div>
 
         {error && (
