@@ -69,6 +69,7 @@ model PlayerStats {
   xG               Float   @default(0) // Expected Goals
   xA               Float   @default(0) // Expected Assists
   recoveries       Int     @default(0)
+  heatmapGrid      Json?
 
   @@unique([playerId, seasonId])
   @@index([playerId])
