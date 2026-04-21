@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import type { PaginatedResponse, Player, ApiResponse, PlayerStatsResponse } from "../types";
+import type { PaginatedResponse, Player, ApiResponse, PlayerStatsResponse, Season } from "../types";
 export interface PlayersFilters {
   name?: string;
   position?: string;
@@ -35,16 +35,28 @@ export function usePlayer(id: number) {
   });
 }
 
-export function useComparePlayers(ids: number[]) {
+export function useComparePlayers(ids: number[], seasonId?: number) {
   return useQuery<ApiResponse<Player[]>>({
-    queryKey: ["compare", ids],
+    queryKey: ["compare", ids, seasonId],
     queryFn: async () => {
-      const { data } = await api.get("/players/compare", {
-        params: { ids: ids.join(",") },
-      });
+      const params: Record<string, string> = {
+        ids: ids.join(","),
+      };
+      if (seasonId) params.seasonId = String(seasonId);
+      const { data } = await api.get("/players/compare", { params });
       return data;
     },
     enabled: ids.length >= 2,
+  });
+}
+
+export function useSeasons() {
+  return useQuery<ApiResponse<Season[]>>({
+    queryKey: ["seasons"],
+    queryFn: async () => {
+      const { data } = await api.get("/seasons");
+      return data;
+    },
   });
 }
 

@@ -90,16 +90,18 @@ export async function findPlayerById(id: number) {
   return player;
 }
 
-export async function findPlayersToCompare(ids: number[]) {
+export async function findPlayersToCompare(ids: number[], seasonId?: number) {
   if (ids.some(isNaN)) {
     throw new AppError(400, "Invalid player IDs");
   }
 
+  // jugadores con sus stats filtradas
   const players = await prisma.player.findMany({
     where: { id: { in: ids } },
     include: {
       team: true,
       stats: {
+        where: seasonId ? { seasonId } : undefined,
         include: { season: true },
         orderBy: { season: { name: "desc" } },
       },
@@ -110,7 +112,51 @@ export async function findPlayersToCompare(ids: number[]) {
     throw new AppError(400, "At least 2 valid players are required");
   }
 
-  return players;
+  // pares para calcular percentiles
+
+  const positions = players.map(p => p.position);
+  const peersStats = await prisma.playerStats.findMany({
+    where: {
+      player: { position: { in: positions } },
+      seasonId: seasonId ? seasonId : undefined 
+    },
+  });
+
+  function getPercentile(value: number, key: string, position: string, higherIsBetter = true) {
+    const values = peersStats
+      .filter(s => {
+        return true; 
+      })
+      .map(s => Number((s as any)[key]) || 0);
+
+    if (values.length === 0) return 0;
+    const below = values.filter(v => higherIsBetter ? v <= value : v >= value).length;
+    return Math.round((below / values.length) * 100);
+  }
+
+  const playersWithPercentiles = players.map(player => {
+    const latest = player.stats[0];
+    if (!latest) return { ...player, percentiles: null };
+
+    const percentiles = {
+      goals: getPercentile(Number(latest.goals), "goals", player.position),
+      assists: getPercentile(Number(latest.assists), "assists", player.position),
+      xG: getPercentile(Number(latest.xG), "xG", player.position),
+      xA: getPercentile(Number(latest.xA), "xA", player.position),
+      recoveries: getPercentile(Number(latest.recoveries), "recoveries", player.position),
+      shotsOnTarget: getPercentile(Number(latest.shotsOnTarget), "shotsOnTarget", player.position),
+      successfulPasses: getPercentile(Number(latest.successfulPasses), "successfulPasses", player.position),
+      passAccuracy: getPercentile(Number(latest.passAccuracy), "passAccuracy", player.position),
+      aerialDuelsWon: getPercentile(Number(latest.aerialDuelsWon), "aerialDuelsWon", player.position),
+      defensiveDuelsWon: getPercentile(Number(latest.defensiveDuelsWon), "defensiveDuelsWon", player.position),
+      // Agregamos esta clave para que el Radar y la Tabla la encuentren fácil
+      defensiveActions: getPercentile(Number(latest.defensiveDuelsWon), "defensiveDuelsWon", player.position), 
+    };
+
+    return { ...player, percentiles };
+  });
+
+  return playersWithPercentiles;
 }
 
 export async function findPositions() {
@@ -197,4 +243,10 @@ export async function findPlayerStats(playerId: number) {
   };
 
   return { player, percentiles };
+}
+
+export async function findSeasons() {
+  return prisma.season.findMany({
+    orderBy: { name: "desc" },
+  });
 }

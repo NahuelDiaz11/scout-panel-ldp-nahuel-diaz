@@ -34,7 +34,7 @@ async function main() {
 
 
   // ── Players
-const playersData = [
+  const playersData = [
     // --- BOCA JUNIORS (IDs 1-11) ---
     { id: 1, firstName: "Leandro", lastName: "Brey", dob: "2002-09-21", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "GK", height: "1.91m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/982633-1739888426.jpg?lm=1", marketValue: 2000000 },
     { id: 2, firstName: "Marcelo", lastName: "Weigandt", dob: "2000-01-11", nationality: "Argentina", flagUrl: "https://img.sofascore.com/api/v1/country/AR/flag", position: "RB", height: "1.75m", preferredFoot: "Derecho", teamId: 1, photo: "https://img.a.transfermarkt.technology/portrait/header/491690-1740775551.jpg?lm=1", marketValue: 2500000 },
@@ -73,7 +73,7 @@ const playersData = [
         flagUrl: p.flagUrl,
         position: p.position,
         photoUrl: p.photo,
-        height: p.height,              
+        height: p.height,
         preferredFoot: p.preferredFoot,
         marketValue: p.marketValue,
         teamId: p.teamId,
@@ -86,7 +86,7 @@ const playersData = [
         flagUrl: p.flagUrl,
         position: p.position,
         photoUrl: p.photo,
-        height: p.height,             
+        height: p.height,
         preferredFoot: p.preferredFoot,
         marketValue: p.marketValue,
         teamId: p.teamId,
@@ -190,7 +190,7 @@ const playersData = [
   }
 
   // ── Stats (Generamos para los 22) ────────────────────────
-  const statsData = playersData.map(p => ({
+  const statsData2024 = playersData.map(p => ({
     playerId: p.id,
     seasonId: s2024.id,
     matchesPlayed: 25 + Math.floor(Math.random() * 12),
@@ -212,7 +212,53 @@ const playersData = [
     heatmapGrid: heatmapByPosition(p.position)
   }));
 
-  for (const s of statsData) {
+  // ── Stats 2025 ────────────────────────────────────────────
+  const statsData2025 = playersData.map(p => ({
+    playerId: p.id,
+    seasonId: s2025.id,
+    matchesPlayed: 28 + Math.floor(Math.random() * 10),
+    minutesPlayed: 2200 + Math.floor(Math.random() * 700),
+    goals: ["CF", "RW", "LW"].includes(p.position) ? 10 + Math.floor(Math.random() * 12) : p.position === "CAM" ? 6 : 1,
+    assists: ["CAM", "RW", "LW"].includes(p.position) ? 7 + Math.floor(Math.random() * 7) : 2,
+    yellowCards: ["CB", "CDM"].includes(p.position) ? 4 + Math.floor(Math.random() * 4) : 2,
+    redCards: Math.random() > 0.9 ? 1 : 0,
+    shotsOnTarget: ["CF", "RW", "LW"].includes(p.position) ? 35 + Math.floor(Math.random() * 20) : 6,
+    successfulPasses: p.position === "CM" ? 1650 : 850,
+    passAccuracy: p.position === "CM" ? 89.2 : 79.5,
+    aerialDuelsWon: ["CB", "CF"].includes(p.position) ? 55 : 18,
+    aerialDuelsTotal: ["CB", "CF"].includes(p.position) ? 85 : 32,
+    defensiveDuelsWon: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 95 : 22,
+    defensiveDuelsTotal: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 155 : 42,
+    xG: ["CF", "RW", "LW"].includes(p.position) ? 10.8 : 1.4,
+    xA: ["CAM", "RW", "LW"].includes(p.position) ? 6.2 : 1.1,
+    recoveries: ["CB", "CDM"].includes(p.position) ? 165 : 45,
+    heatmapGrid: heatmapByPosition(p.position),
+  }));
+
+  // ── Stats 2026 (temporada en curso, menos partidos) ────────
+  const statsData2026 = playersData.map(p => ({
+    playerId: p.id,
+    seasonId: s2026.id,
+    matchesPlayed: 8 + Math.floor(Math.random() * 5),
+    minutesPlayed: 600 + Math.floor(Math.random() * 300),
+    goals: ["CF", "RW", "LW"].includes(p.position) ? 3 + Math.floor(Math.random() * 4) : p.position === "CAM" ? 2 : 0,
+    assists: ["CAM", "RW", "LW"].includes(p.position) ? 2 + Math.floor(Math.random() * 3) : 1,
+    yellowCards: Math.floor(Math.random() * 3),
+    redCards: 0,
+    shotsOnTarget: ["CF", "RW", "LW"].includes(p.position) ? 10 + Math.floor(Math.random() * 8) : 2,
+    successfulPasses: p.position === "CM" ? 420 : 210,
+    passAccuracy: p.position === "CM" ? 88.8 : 78.5,
+    aerialDuelsWon: ["CB", "CF"].includes(p.position) ? 14 : 4,
+    aerialDuelsTotal: ["CB", "CF"].includes(p.position) ? 22 : 8,
+    defensiveDuelsWon: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 24 : 6,
+    defensiveDuelsTotal: ["CB", "CDM", "LB", "RB"].includes(p.position) ? 38 : 10,
+    xG: ["CF", "RW", "LW"].includes(p.position) ? 2.8 : 0.4,
+    xA: ["CAM", "RW", "LW"].includes(p.position) ? 1.6 : 0.3,
+    recoveries: ["CB", "CDM"].includes(p.position) ? 42 : 11,
+    heatmapGrid: heatmapByPosition(p.position),
+  }));
+
+  for (const s of [...statsData2024, ...statsData2025, ...statsData2026]) {
     await prisma.playerStats.upsert({
       where: { playerId_seasonId: { playerId: s.playerId, seasonId: s.seasonId } },
       update: s,
