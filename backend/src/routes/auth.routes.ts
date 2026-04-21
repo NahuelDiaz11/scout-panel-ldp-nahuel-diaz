@@ -1,7 +1,6 @@
 import { Router } from "express";
+import { login } from "../controllers/auth.controller";
 
 export const authRouter = Router();
 
-authRouter.get("/ping", (_req, res) => {
-  res.json({ data: "auth ok", error: null });
-});
+authRouter.post("/login", login);

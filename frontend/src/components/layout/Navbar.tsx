@@ -1,9 +1,19 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCompareStore } from "../../store/useCompareStore";
+import { useAuthStore } from "../../store/useAuthStore";
+
+const LDP_LOGO_URL = "https://framerusercontent.com/images/BPdPf6k8BgiSiBdZLnUfu46NeKY.png";
 
 export function Navbar() {
   const { selectedPlayers } = useCompareStore();
   const location = useLocation();
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <nav style={{
@@ -18,38 +28,72 @@ export function Navbar() {
       top: 0,
       zIndex: 100,
     }}>
-      <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: "var(--radius-sm)",
-          background: "var(--primary)", display: "flex",
-          alignItems: "center", justifyContent: "center",
-          fontWeight: 700, fontSize: 14, color: "#0F0F0F",
-        }}>SP</div>
-        <span style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>
-          Scout Panel
-        </span>
+      
+      {/* ── LOGO Y NOMBRE ── */}
+      <Link to="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+        <img 
+          src={LDP_LOGO_URL} 
+          alt="LDP Logo" 
+          style={{ height: 28, width: "auto" }} 
+          referrerPolicy="no-referrer"
+        />
       </Link>
 
-      <div style={{ display: "flex", gap: 8 }}>
-        <NavLink to="/" active={location.pathname === "/"}>
-          Players
-        </NavLink>
-        <NavLink to="/compare" active={location.pathname === "/compare"}>
-          Compare
-          {selectedPlayers.length > 0 && (
-            <span style={{
-              marginLeft: 6,
-              background: "var(--primary)",
-              color: "#0F0F0F",
-              borderRadius: 99,
-              fontSize: 11,
-              fontWeight: 700,
-              padding: "1px 7px",
-            }}>
-              {selectedPlayers.length}
-            </span>
-          )}
-        </NavLink>
+      {/* ── NAVEGACIÓN Y ACCIONES ── */}
+      <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+        
+        {/* Links principales */}
+        <div style={{ display: "flex", gap: 8 }}>
+          <NavLink to="/" active={location.pathname === "/"}>
+            Jugadores
+          </NavLink>
+          <NavLink to="/compare" active={location.pathname === "/compare"}>
+            Comparador
+            {selectedPlayers.length > 0 && (
+              <span style={{
+                marginLeft: 6,
+                background: "var(--primary)",
+                color: "#0F0F0F",
+                borderRadius: 99,
+                fontSize: 11,
+                fontWeight: 700,
+                padding: "1px 7px",
+              }}>
+                {selectedPlayers.length}
+              </span>
+            )}
+          </NavLink>
+        </div>
+
+        {/* Separador vertical */}
+        <div style={{ width: 1, height: 24, background: "var(--border)" }} />
+
+        {/* Botón Cerrar Sesión */}
+        <button 
+          onClick={handleLogout} 
+          style={{ 
+            background: "transparent", 
+            border: "none", 
+            color: "var(--text-muted)", 
+            padding: "6px 12px", 
+            borderRadius: "var(--radius-sm)", 
+            fontSize: 14, 
+            fontWeight: 600, 
+            cursor: "pointer",
+            transition: "all 0.15s"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--text)";
+            e.currentTarget.style.background = "var(--bg-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--text-muted)";
+            e.currentTarget.style.background = "transparent";
+          }}
+        >
+          Cerrar Sesión
+        </button>
+
       </div>
     </nav>
   );
@@ -71,6 +115,7 @@ function NavLink({ to, active, children }: {
       transition: "all 0.15s",
       display: "flex",
       alignItems: "center",
+      textDecoration: "none"
     }}>
       {children}
     </Link>
