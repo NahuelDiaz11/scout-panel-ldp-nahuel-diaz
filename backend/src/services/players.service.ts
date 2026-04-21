@@ -193,6 +193,7 @@ export async function findPlayerStats(playerId: number) {
     recoveries: calcPercentile("recoveries"),
     yellowCards: calcPercentile("yellowCards", false),
     redCards: calcPercentile("redCards", false),
+    flagUrl: true,
   };
 
   return { player, percentiles };
