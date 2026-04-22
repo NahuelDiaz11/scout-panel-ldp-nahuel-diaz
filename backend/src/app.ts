@@ -5,6 +5,7 @@ import { playersRouter } from "./routes/players.routes";
 import { seasonsRouter } from "./routes/seasons.routes";
 import { authRouter } from "./routes/auth.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import { shortlistRouter } from "./routes/shortlist.routes";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/api/players", playersRouter);
 app.use("/api/seasons", seasonsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/shortlist", shortlistRouter);
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
