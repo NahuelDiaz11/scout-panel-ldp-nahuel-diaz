@@ -396,9 +396,23 @@ Implementación de **Paginación Server-Side (Offset/Limit)** en los listados y 
 ### Diseño Responsive (Mobile First)
 Layout fluido apoyado en CSS Grid y Flexbox. La grilla de jugadores se adapta dinámicamente al *viewport*, los filtros laterales colapsan detrás de un *toggle* en dispositivos móviles, y las vistas complejas (como el comparador) apilan sus elementos verticalmente en pantallas estrechas sin perder legibilidad.
 
-### Deploy Live
-La aplicación se encuentra desplegada y configurada con integración continua.
-* **Live URL:** [Insertar aquí tu link de Vercel/Netlify/Render]
+## Deploy & Live Demo
+
+La aplicación se encuentra desplegada utilizando una arquitectura de microservicios para garantizar escalabilidad y persistencia:
+
+- **Frontend:** Desplegado en [Vercel](https://vercel.com/) (Vite + React).
+- **Backend:** API REST desplegada en [Render](https://render.com/) (Node.js + Express).
+- **Base de Datos:** PostgreSQL administrado en [Neon.tech](https://neon.tech/) (Serverless).
+
+ **URL del Proyecto:** [https://scout-panel-ldp-nahuel-diaz-nine.vercel.app/](https://scout-panel-ldp-nahuel-diaz-nine.vercel.app/)
+
+### Credenciales de Acceso
+
+Podés registrar tu propio usuario para probar la persistencia, o utilizar la siguiente cuenta de prueba:
+
+| Usuario | Contraseña |
+|---------|------------|
+| scout@test.com | 123456 |
 
 ---
 
