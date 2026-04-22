@@ -6,6 +6,7 @@ import { PlayerStatsTable } from "../components/players/PlayerStatsTable";
 import HeatmapField from "../components/players/HeatmapField";
 import { RadarComparison } from "../components/players/RadarComparison";
 import { useState, useRef } from "react";
+import { ArrowLeft } from "lucide-react";
 
 const C = {
     bg: "#0F0F0F",
@@ -82,7 +83,7 @@ export function PlayerProfilePage() {
 
     let safeGrid = latestStats?.heatmapGrid;
     if (typeof safeGrid === 'string') {
-        try { safeGrid = JSON.parse(safeGrid); } 
+        try { safeGrid = JSON.parse(safeGrid); }
         catch (e) { safeGrid = null; }
     }
 
@@ -92,29 +93,47 @@ export function PlayerProfilePage() {
     return (
         <div style={{ fontFamily: "'Nunito Sans', sans-serif", paddingBottom: 80 }}>
 
-            <div 
+            {/* ── BOTÓN DE VOLVER ATRÁS  ── */}
+            <div style={{ marginBottom: 20 }}>
+                <button
+                    onClick={() => navigate(-1)}
+                    style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        padding: "8px 16px 8px 0", background: "transparent",
+                        border: "none", color: C.muted, cursor: "pointer",
+                        fontSize: 14, fontWeight: 700, transition: "color 0.2s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = C.text}
+                    onMouseLeave={(e) => e.currentTarget.style.color = C.muted}
+                >
+                    <ArrowLeft size={18} strokeWidth={2.5} />
+                    Volver
+                </button>
+            </div>
+
+            <div
                 ref={heroRef}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 style={{
                     position: "relative",
-                    overflow: "hidden", 
+                    overflow: "hidden",
                     backgroundColor: C.card,
                     backgroundImage: `radial-gradient(${C.border} 1px, transparent 1px)`,
                     backgroundSize: "20px 20px",
-                    border: `1px solid ${C.border}`, 
+                    border: `1px solid ${C.border}`,
                     borderRadius: 12,
-                    padding: "24px 32px", 
-                    marginBottom: 24, 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "space-between", 
+                    padding: "24px 32px",
+                    marginBottom: 24,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     gap: 24,
                     flexWrap: "wrap"
                 }}
             >
-                <div 
+                <div
                     style={{
                         position: "absolute",
                         inset: 0,
@@ -127,29 +146,37 @@ export function PlayerProfilePage() {
                             transparent 50%
                         )`,
                         pointerEvents: "none"
-                    }} 
+                    }}
                 />
 
                 <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
-                    <button
-                        onClick={() => navigate("/")}
-                        style={{
-                            background: "transparent", border: "none", color: C.muted,
-                            cursor: "pointer", fontSize: 20, padding: "4px 8px", borderRadius: 6,
-                        }}
-                    >
-                        ←
-                    </button>
-
+                    {/* ── FOTO DEL JUGADOR  ── */}
                     <div style={{
-                        width: 72, height: 72, borderRadius: "50%", background: C.surface,
-                        overflow: "hidden", border: `2px solid ${C.border}`, flexShrink: 0,
-                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: 110, height: 110,
+                        display: "flex", alignItems: "flex-end", justifyContent: "center",
+                        flexShrink: 0, position: "relative"
                     }}>
                         {player.photoUrl ? (
-                            <img src={player.photoUrl} alt={`${player.firstName} ${player.lastName}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} referrerPolicy="no-referrer" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                            <img
+                                src={player.photoUrl}
+                                alt={`${player.firstName} ${player.lastName}`}
+                                loading="lazy"
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                    filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))"
+                                }}
+                                referrerPolicy="no-referrer"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                            />
                         ) : (
-                            <div style={{ fontSize: 22, fontWeight: 800, color: C.muted }}>
+                            <div style={{
+                                width: "100%", height: "100%",
+                                borderRadius: "50%", border: `2px solid ${C.border}`, background: C.surface,
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontSize: 32, fontWeight: 800, color: C.muted
+                            }}>
                                 {player.firstName?.[0]}{player.lastName?.[0]}
                             </div>
                         )}
@@ -158,10 +185,10 @@ export function PlayerProfilePage() {
                     <div>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
                             {player.flagUrl && (
-                                <img 
-                                    src={player.flagUrl} 
-                                    alt={player.nationality} 
-                                    style={{ width: 22, height: 16, objectFit: "cover", borderRadius: 2 }} 
+                                <img
+                                    src={player.flagUrl}
+                                    alt={player.nationality}
+                                    style={{ width: 22, height: 16, objectFit: "cover", borderRadius: 2 }}
                                     referrerPolicy="no-referrer"
                                 />
                             )}
@@ -182,16 +209,16 @@ export function PlayerProfilePage() {
 
                 <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", position: "relative", zIndex: 1 }}>
                     {player.team && (
-                        <div style={{ 
-                            background: C.surface, border: `1px solid ${C.border}`, 
-                            borderRadius: 10, padding: "12px 20px", 
-                            display: "flex", alignItems: "center", gap: 12 
+                        <div style={{
+                            background: C.surface, border: `1px solid ${C.border}`,
+                            borderRadius: 10, padding: "12px 20px",
+                            display: "flex", alignItems: "center", gap: 12
                         }}>
                             {player.team.logoUrl && (
-                                <img 
-                                    src={player.team.logoUrl} 
-                                    alt={player.team.name} 
-                                    style={{ width: 32, height: 32, objectFit: "contain" }} 
+                                <img
+                                    src={player.team.logoUrl}
+                                    alt={player.team.name}
+                                    style={{ width: 32, height: 32, objectFit: "contain" }}
                                     referrerPolicy="no-referrer"
                                 />
                             )}
@@ -233,7 +260,6 @@ export function PlayerProfilePage() {
                             Información General
                         </div>
                         {[
-                            { label: "Edad", value: `${getAge(player.dateOfBirth)} años` },
                             { label: "Altura", value: player.height ?? "1.80m" },
                             { label: "Pie Hábil", value: player.preferredFoot ?? "Derecho" },
                             { label: "Partidos Jugados", value: totalMatches },
@@ -248,7 +274,7 @@ export function PlayerProfilePage() {
                     <div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
                             <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />
-                            Market value
+                            Valor de Mercado
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
                             <span style={{ color: C.muted }}>Valor Transfermarkt</span>
@@ -285,7 +311,7 @@ export function PlayerProfilePage() {
                 </div>
             </div>
 
-            {/* ── 3. RADAR & HEATMAP JUNTOS ── */}
+            {/* ──  RADAR & HEATMAP JUNTOS ── */}
             <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
@@ -313,7 +339,7 @@ export function PlayerProfilePage() {
                 </div>
             </div>
 
-            {/* ── 4. STATISTICS CIRCLES ── */}
+            {/* ──  STATISTICS CIRCLES ── */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -324,9 +350,9 @@ export function PlayerProfilePage() {
                 </div>
                 {latestStats && (
                     <div style={{
-                        display: "grid", 
+                        display: "grid",
                         gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-                        gap: 24, padding: "16px 0" 
+                        gap: 24, padding: "16px 0"
                     }}>
                         {statCircles.map((stat) => (
                             <StatCircle key={stat.label} label={stat.label} pct={stat.pct} color={C.purple} />
@@ -335,7 +361,7 @@ export function PlayerProfilePage() {
                 )}
             </div>
 
-            {/* ── 5. TABLA HISTÓRICA ── */}
+            {/* ──  TABLA HISTÓRICA ── */}
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}>
                     <span style={{ width: 3, height: 14, background: C.primary, borderRadius: 2, display: "inline-block" }} />

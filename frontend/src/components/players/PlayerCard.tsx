@@ -138,17 +138,27 @@ export function PlayerCard({ player }: { player: Player }) {
                 </div>
 
                 {/* Foto Central */}
-                <Link to={`/players/${player.id}`} style={{ display: "block", textDecoration: "none" }}>
+            <Link to={`/players/${player.id}`} style={{ display: "block", textDecoration: "none" }}>
                     <div style={{
-                        width: 110, height: 110, borderRadius: "50%",
-                        border: `2px solid ${C.primary}`, padding: 2,
-                        background: "#0F0F0F", overflow: "hidden",
-                        position: "relative", zIndex: 2 // Asegura que esté por encima del glow
+                        width: 120, height: 120, 
+                        position: "relative", 
+                        zIndex: 2,
+                        display: "flex",
+                        alignItems: "flex-end", 
+                        justifyContent: "center"
                     }}>
                         {player.photoUrl ? (
-                            <img src={player.photoUrl} alt={player.lastName} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} referrerPolicy="no-referrer" />
+                            <img 
+                                src={player.photoUrl} 
+                                alt={player.lastName} 
+                                loading="lazy"
+                                width="120"
+                                height="120"
+                                style={{ width: "100%", height: "100%", objectFit: "contain", dropShadow: "0px 10px 10px rgba(0,0,0,0.5)" }} 
+                                referrerPolicy="no-referrer" 
+                            />
                         ) : (
-                            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 800, color: C.muted, borderRadius: "50%" }}>
+                            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 800, color: C.muted, borderRadius: "50%", background: "#0F0F0F" }}>
                                 {player.firstName?.[0]}{player.lastName?.[0]}
                             </div>
                         )}
