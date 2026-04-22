@@ -7,6 +7,7 @@ import { SeasonBarChart } from "../components/players/SeasonBarChart";
 import { useNavigate } from "react-router-dom";
 import HeatmapField from "../components/players/HeatmapField";
 import { ArrowLeft } from "lucide-react";
+import { ErrorState } from "../components/ui/ErrorState";
 
 const C = {
   bg: "#0F0F0F",
@@ -121,7 +122,7 @@ export function ComparePage() {
     });
   };
 
-  const { data, isLoading } = useComparePlayers(ids, selectedSeason);
+  const { data, isLoading, isError } = useComparePlayers(ids, selectedSeason);
   const players = data?.data || [];
 
   const { data: seasonsData } = useSeasons();
@@ -150,6 +151,23 @@ export function ComparePage() {
 
   if (isLoading) {
     return <div style={{ textAlign: "center", padding: 80, color: C.muted, fontFamily: "'Nunito Sans', sans-serif" }}>Loading comparison...</div>;
+  }
+
+  if (isLoading) {
+    return <div style={{ textAlign: "center", padding: 80, color: C.muted, fontFamily: "'Nunito Sans', sans-serif" }}>Loading comparison...</div>;
+  }
+
+  // 👇 AGREGAMOS ESTE BLOQUE
+  if (isError) {
+    return (
+        <div style={{ padding: "40px clamp(16px, 4vw, 40px)", maxWidth: 600, margin: "0 auto" }}>
+            <ErrorState 
+                title="Error al cargar la comparación"
+                message="No pudimos conectarnos con el servidor para traer los datos de los jugadores."
+                onRetry={() => window.location.reload()}
+            />
+        </div>
+    );
   }
 
   const summaryRows = [
