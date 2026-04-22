@@ -31,22 +31,25 @@ function getAge(dateOfBirth: string) {
 }
 
 // ── HEADER PRINCIPAL DEL COMPARADOR (FOTOS RECTANGULARES) ──
-function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left" | "right" }) {
+function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left" | "right" | "center" }) {
+  const isMobile = window.innerWidth < 768;
+
   const isRight = align === "right";
+  const isCenter = align === "center" || isMobile;
+
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: 24,
-      flexDirection: isRight ? "row-reverse" : "row",
-      textAlign: isRight ? "right" : "left",
-      flexWrap: "wrap", justifyContent: "center"
+      display: "flex",
+      alignItems: "center",
+      gap: 24,
+      flexDirection: isCenter ? "column" : (isRight ? "row-reverse" : "row"),
+      textAlign: isCenter ? "center" : (isRight ? "right" : "left"),
+      flexWrap: "wrap",
+      justifyContent: "center"
     }}>
       <div style={{
-        width: 110, height: 110,
-        display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "center",
-        flexShrink: 0,
-        position: "relative",
+        width: isMobile ? 80 : 110,
+        height: isMobile ? 80 : 110,
       }}>
         {player.photoUrl ? (
           <img
@@ -63,9 +66,10 @@ function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left
       </div>
       <div>
         <h2 style={{
-          fontSize: 32, fontWeight: 900, color: C.text,
+          fontSize: isMobile ? 24 : 32,
+          fontWeight: 900, color: C.text,
           margin: "0 0 8px 0", display: "flex", alignItems: "center", gap: 12,
-          justifyContent: isRight ? "flex-end" : "flex-start",
+          justifyContent: isCenter ? "center" : (isRight ? "flex-end" : "flex-start"),
           letterSpacing: "-0.5px"
         }}>
           {player.flagUrl && (
@@ -342,20 +346,23 @@ export function ComparePage() {
           />
 
           <div style={{
-            position: "relative", zIndex: 1,
-            display: isThreePlayers && !isMobile ? "grid" : "flex",
-            flexDirection: isThreePlayers && isMobile ? "column" : "row",
-            gridTemplateColumns: isThreePlayers && !isMobile ? "1fr auto 1fr auto 1fr" : undefined,
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : (isThreePlayers ? "1fr auto 1fr auto 1fr" : "1fr auto 1fr"),
             alignItems: "center",
             justifyContent: "center",
-            gap: isThreePlayers && !isMobile ? "clamp(12px, 2vw, 24px)" : "clamp(16px, 4vw, 60px)",
-            width: "100%", maxWidth: 1200,
-            flexWrap: "wrap"
+            gap: isMobile ? 40 : "clamp(12px, 2vw, 24px)",
+            width: "100%",
+            maxWidth: 1200,
           }}>
             {/* Jugador 0 */}
             {players[0] && (
               <div style={{ flex: "1 1 min-content" }}>
-                <PlayerVSHeader player={players[0]} align={isMobile ? "left" : "right"} />
+
+                <PlayerVSHeader player={players[0]} align={isMobile ? "center" : "right"} />
               </div>
             )}
 
@@ -367,20 +374,15 @@ export function ComparePage() {
             {/* Jugador 1 */}
             {players[1] && (
               <div style={{ flex: "1 1 min-content" }}>
-                <PlayerVSHeader player={players[1]} align="left" />
+                <PlayerVSHeader player={players[1]} align={isMobile ? "center" : "left"} />
               </div>
             )}
 
             {/* Jugador 2 (Si existe) */}
             {players[2] && (
               <>
-                {/* Segundo VS Oculto en móviles */}
-                {!isMobile && (
-                  <div style={{ fontSize: 20, fontWeight: 900, color: C.muted, background: C.surface, padding: "12px 20px", borderRadius: 30, border: `1px solid ${C.border}` }}>VS</div>
-                )}
-                <div style={{ flex: "1 1 min-content" }}>
-                  <PlayerVSHeader player={players[2]} align="left" />
-                </div>
+                {!isMobile && <div style={vsBadgeStyle}>VS</div>}
+                <PlayerVSHeader player={players[2]} align={isMobile ? "center" : "left"} />
               </>
             )}
           </div>
@@ -511,4 +513,18 @@ const btnClearStyle: React.CSSProperties = {
   padding: "8px 16px", background: "transparent", border: "1px solid #242424",
   color: "#F2F2F2", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700,
   transition: "all 0.2s"
+};
+
+const vsBadgeStyle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 900,
+  color: C.muted,
+  background: C.surface,
+  padding: "12px 20px",
+  borderRadius: 30,
+  border: `1px solid ${C.border}`,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0 
 };
