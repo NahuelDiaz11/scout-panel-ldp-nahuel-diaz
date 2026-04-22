@@ -9,8 +9,11 @@ import {
 } from "../controllers/players.controller";
 import { validate } from "../middleware/validate";
 import { playersQuerySchema, compareQuerySchema } from "../schemas/players.schema";
+import { authMiddleware } from "../middleware/auth";
 
 export const playersRouter = Router();
+
+playersRouter.use(authMiddleware);
 
 // GET /api/players?name=&position=&nationality=&ageMin=&ageMax=&page=
 playersRouter.get("/", validate(playersQuerySchema), getPlayers);

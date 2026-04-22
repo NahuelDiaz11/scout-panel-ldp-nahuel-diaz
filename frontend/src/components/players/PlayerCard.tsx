@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useCompareStore } from "../../store/useCompareStore";
 import type { Player } from "../../types";
 import { useState, useRef } from "react";
+import { Bookmark } from "lucide-react";
+import { useShortlist } from "../../hooks/useShortlist";
 
 const C = {
     primary: "#00E094",
@@ -20,6 +22,9 @@ export function PlayerCard({ player }: { player: Player }) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isHovered, setIsHovered] = useState(false);
+
+    const { savedPlayerIds, toggleShortlist } = useShortlist();
+    const isSaved = savedPlayerIds.includes(player.id);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!cardRef.current) return;
@@ -80,6 +85,43 @@ export function PlayerCard({ player }: { player: Player }) {
                     pointerEvents: "none"
                 }} />
             )}
+            <button
+                onClick={(e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    toggleShortlist(player.id);
+                }}
+                style={{
+                    position: "absolute",
+                    top: 16,
+                    right: 16,
+                    background: isSaved ? C.primary : "rgba(0,0,0,0.4)",
+                    border: `1px solid ${isSaved ? C.primary : C.border}`,
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    zIndex: 10,
+                    transition: "all 0.2s ease",
+                    color: isSaved ? "#0F0F0F" : C.text,
+                    backdropFilter: "blur(4px)"
+                }}
+                onMouseEnter={(e) => {
+                    if (!isSaved) e.currentTarget.style.background = "rgba(0, 224, 148, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                    if (!isSaved) e.currentTarget.style.background = "rgba(0,0,0,0.4)";
+                }}
+            >
+                <Bookmark 
+                    size={16} 
+                    strokeWidth={2.5} 
+                    fill={isSaved ? "#0F0F0F" : "none"} // Se rellena si está guardado
+                />
+            </button>
 
             <div style={{ display: "flex", width: "100%", justifyContent: "space-between", zIndex: 1, marginBottom: 8 }}>
 
