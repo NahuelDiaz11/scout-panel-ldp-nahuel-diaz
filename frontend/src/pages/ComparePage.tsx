@@ -6,7 +6,7 @@ import { StatsTable } from "../components/players/StatsTable";
 import { SeasonBarChart } from "../components/players/SeasonBarChart";
 import { useNavigate } from "react-router-dom";
 import HeatmapField from "../components/players/HeatmapField";
-import { ArrowLeft, Table, FileText } from "lucide-react";
+import { ArrowLeft, Table, FileText, Sparkles, Bot } from "lucide-react";
 import { ErrorState } from "../components/ui/ErrorState";
 import { exportToExcel, exportToPDF } from "../utils/exportUtils";
 
@@ -149,6 +149,48 @@ export function ComparePage() {
     }
   };
 
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [aiReport, setAiReport] = useState<string | null>(null);
+
+  const handleGenerateAIReport = async () => {
+    setIsGeneratingAI(true);
+    setAiReport(null);
+
+    try {
+
+      const apiUrl = 'http://localhost:3001/api';
+
+
+      const response = await fetch(`${apiUrl}/ai/compare`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          players: players.filter(Boolean)
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en el servidor: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAiReport(data.report);
+      } else {
+        throw new Error(data.error || "Error desconocido al generar el reporte");
+      }
+
+    } catch (error) {
+      console.error("Hubo un fallo al conectar con la IA:", error);
+      setAiReport("⚠️ Ups, hubo un problema de conexión al intentar generar el análisis con Inteligencia Artificial. Por favor, revisa que el backend esté funcionando o inténtalo de nuevo.");
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   if (selectedPlayers.length < 2) {
     return (
       <div style={{ textAlign: "center", padding: 80, fontFamily: "'Nunito Sans', sans-serif" }}>
@@ -235,6 +277,20 @@ export function ComparePage() {
         </div>
 
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button
+            onClick={handleGenerateAIReport}
+            disabled={isGeneratingAI || players.length < 2}
+            style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "8px 16px",
+              background: "rgba(117, 51, 252, 0.1)", color: C.purple,
+              border: `1px solid rgba(117, 51, 252, 0.3)`, borderRadius: 6,
+              fontSize: 13, fontWeight: 800, cursor: isGeneratingAI ? "wait" : "pointer",
+              transition: "all 0.2s"
+            }}
+          >
+            {isGeneratingAI ? <Bot size={16} className="animate-pulse" /> : <Sparkles size={16} />}
+            {isGeneratingAI ? "Analizando..." : "Análisis IA"}
+          </button>
           <button onClick={handleDownloadExcel} style={btnDownloadStyle}>
             <Table size={16} /> Excel
           </button>
@@ -330,7 +386,35 @@ export function ComparePage() {
             )}
           </div>
         </div>
+        {/* SECCIÓN DE REPORTE IA */}
+        {(isGeneratingAI || aiReport) && (
+          <div style={{
+            background: "rgba(117, 51, 252, 0.03)",
+            border: `1px solid rgba(117, 51, 252, 0.2)`,
+            borderRadius: 12,
+            padding: 24,
+            marginBottom: 32,
+            position: "relative",
+            overflow: "hidden"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <Sparkles color={C.purple} size={20} />
+              <h3 style={{ margin: 0, color: C.text, fontSize: 16, fontWeight: 800 }}>Veredicto Scout AI</h3>
+            </div>
 
+            {isGeneratingAI ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ height: 12, background: C.border, borderRadius: 6, width: "100%", animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }} />
+                <div style={{ height: 12, background: C.border, borderRadius: 6, width: "90%", animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }} />
+                <div style={{ height: 12, background: C.border, borderRadius: 6, width: "60%", animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }} />
+              </div>
+            ) : (
+              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.6, whiteSpace: "pre-wrap", margin: 0 }}>
+                {aiReport}
+              </p>
+            )}
+          </div>
+        )}
         {/* ── 1. Resumen General ── */}
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 32 }}>
           <div style={{ marginBottom: 16, fontSize: 13, fontWeight: 700, color: C.text, display: "flex", alignItems: "center", gap: 6 }}>
