@@ -11,7 +11,6 @@ const C = {
 
 // Sub-componente para cada jugador individual
 function PlayerVSHeader({ player, align = "left", isMobile }: { player: any; align?: "left" | "right"; isMobile: boolean }) {
-    const isRight = align === "right";
     const finalAlign = isMobile ? "left" : align; // Forzamos izquierda en mobile
 
     return (
