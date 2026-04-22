@@ -1,11 +1,12 @@
 import { useCompareStore } from "../store/useCompareStore";
 import { useComparePlayers, useSeasons } from "../hooks/usePlayers";
-import { useState, useEffect, useRef } from "react"; // Sumamos useRef
+import { useState, useEffect, useRef } from "react";
 import { RadarComparison } from "../components/players/RadarComparison";
 import { StatsTable } from "../components/players/StatsTable";
 import { SeasonBarChart } from "../components/players/SeasonBarChart";
 import { useNavigate } from "react-router-dom";
 import HeatmapField from "../components/players/HeatmapField";
+import { ArrowLeft } from "lucide-react";
 
 const C = {
   bg: "#0F0F0F",
@@ -27,44 +28,48 @@ function getAge(dateOfBirth: string) {
   return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 }
 
-// ── HEADER PRINCIPAL DEL COMPARADOR ──
+// ── HEADER PRINCIPAL DEL COMPARADOR (FOTOS RECTANGULARES) ──
 function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left" | "right" }) {
   const isRight = align === "right";
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: 16,
+      display: "flex", alignItems: "center", gap: 24,
       flexDirection: isRight ? "row-reverse" : "row",
       textAlign: isRight ? "right" : "left",
       flexWrap: "wrap", justifyContent: "center"
     }}>
       <div style={{
-        width: 64, height: 64, borderRadius: "50%",
-        background: C.surface, overflow: "hidden",
-        border: `2px solid ${C.border}`, flexShrink: 0,
+        width: 110, height: 110,
+        display: "flex",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        flexShrink: 0,
+        position: "relative",
       }}>
         {player.photoUrl ? (
           <img
             src={player.photoUrl} alt={player.firstName}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))" }}
             referrerPolicy="no-referrer"
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
         ) : (
-          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800, color: C.muted }}>
+          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 800, color: C.muted }}>
             {player.firstName?.[0]}{player.lastName?.[0]}
           </div>
         )}
       </div>
       <div>
         <h2 style={{
-          fontSize: 22, fontWeight: 800, color: C.text,
-          margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: 10,
-          justifyContent: isRight ? "flex-end" : "flex-start"
+          fontSize: 32, fontWeight: 900, color: C.text,
+          margin: "0 0 8px 0", display: "flex", alignItems: "center", gap: 12,
+          justifyContent: isRight ? "flex-end" : "flex-start",
+          letterSpacing: "-0.5px"
         }}>
           {player.flagUrl && (
             <img
               src={player.flagUrl} alt={player.nationality}
-              style={{ width: 22, height: 16, objectFit: "cover", borderRadius: 2 }}
+              style={{ width: 26, height: 18, objectFit: "cover", borderRadius: 3 }}
               referrerPolicy="no-referrer"
             />
           )}
@@ -72,18 +77,18 @@ function PlayerVSHeader({ player, align = "left" }: { player: any; align?: "left
         </h2>
 
         <div style={{
-          fontSize: 13, color: C.muted, display: "flex", alignItems: "center", gap: 8,
+          fontSize: 15, color: C.muted, display: "flex", alignItems: "center", gap: 10,
           justifyContent: isRight ? "flex-end" : "flex-start", flexWrap: "wrap"
         }}>
-          <span style={{ color: C.primary, fontWeight: 800 }}>{player.position}</span>
-          <span>|</span>
-          <span>{getAge(player.dateOfBirth)} años</span>
+          <span style={{ color: C.primary, fontWeight: 800, textTransform: "uppercase" }}>{player.position}</span>
+          <span style={{ opacity: 0.3 }}>|</span>
+          <span style={{ fontWeight: 600 }}>{getAge(player.dateOfBirth)} años</span>
           {player.team?.name && (
             <>
-              <span>|</span>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ opacity: 0.3 }}>|</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
                 {player.team.logoUrl && (
-                  <img src={player.team.logoUrl} alt={player.team.name} style={{ width: 16, height: 16, objectFit: "contain" }} referrerPolicy="no-referrer" />
+                  <img src={player.team.logoUrl} alt={player.team.name} style={{ width: 20, height: 20, objectFit: "contain" }} referrerPolicy="no-referrer" />
                 )}
                 <span>{player.team.name}</span>
               </div>
@@ -103,7 +108,6 @@ export function ComparePage() {
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // ── ESTADOS PARA EL EFECTO SPOTLIGHT DEL HEADER ──
   const headerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -135,10 +139,10 @@ export function ComparePage() {
     return (
       <div style={{ textAlign: "center", padding: 80, fontFamily: "'Nunito Sans', sans-serif" }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>⚽</div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 8 }}>Select at least 2 players</div>
-        <p style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>Go back to the list and add players to compare</p>
+        <div style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 8 }}>Selecciona al menos 2 jugadores</div>
+        <p style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>Vuelve a la lista y agrega jugadores para comparar</p>
         <button onClick={() => navigate("/")} style={{ padding: "10px 24px", borderRadius: 6, background: C.primary, color: "#0F0F0F", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer" }}>
-          View players
+          Ver jugadores
         </button>
       </div>
     );
@@ -160,42 +164,99 @@ export function ComparePage() {
   ];
 
   return (
-    <div style={{ fontFamily: "'Nunito Sans', sans-serif", minHeight: "100vh", padding: "24px clamp(16px, 4vw, 40px)", paddingBottom: 80 }}>
+    <div style={{ fontFamily: "'Nunito Sans', sans-serif", minHeight: "100vh", padding: "0 clamp(16px, 4vw, 40px)", paddingBottom: 80 }}>
 
-      {/* ── Header VS (Con Textura y Spotlight) ── */}
-      <div 
+      {/* ── Barra de Acciones Unificada ── */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "24px 0",
+        gap: 16,
+        flexWrap: "wrap",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "8px 0", background: "transparent",
+              border: "none", color: C.muted, cursor: "pointer",
+              fontSize: 14, fontWeight: 700, transition: "color 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = C.text}
+            onMouseLeave={(e) => e.currentTarget.style.color = C.muted}
+          >
+            <ArrowLeft size={18} strokeWidth={2.5} />
+            Volver
+          </button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 13, color: C.muted, fontWeight: 700 }}>Temporada:</span>
+            <select
+              value={selectedSeason || ""}
+              onChange={(e) => setSelectedSeason(e.target.value ? Number(e.target.value) : undefined)}
+              style={{
+                background: C.surface, color: C.text, border: `1px solid ${C.border}`,
+                padding: "8px 16px", borderRadius: 6, fontSize: 13, fontWeight: 700,
+                outline: "none", cursor: "pointer"
+              }}
+            >
+              <option value="">Todas las temporadas</option>
+              {seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <button
+          onClick={() => clearPlayers()}
+          style={{
+            padding: "8px 16px", background: "transparent", border: `1px solid ${C.border}`,
+            color: C.text, borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700,
+            transition: "all 0.2s"
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.surface; e.currentTarget.style.color = "#E84040"; e.currentTarget.style.borderColor = "rgba(232, 64, 64, 0.4)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.border; }}
+        >
+          Limpiar comparador
+        </button>
+      </div>
+
+      {/* ── Header VS (Con Textura y Spotlight) AHORA DEL MISMO ANCHO ── */}
+      <div
         ref={headerRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
           position: "relative",
-          overflow: "hidden", 
+          overflow: "hidden",
           background: C.card,
           backgroundImage: `radial-gradient(${C.border} 1px, transparent 1px)`,
           backgroundSize: "20px 20px",
-          borderBottom: `1px solid ${C.border}`,
-          padding: "24px clamp(16px, 4vw, 40px)",
-          margin: "-24px calc(-1 * clamp(16px, 4vw, 40px)) 32px calc(-1 * clamp(16px, 4vw, 40px))",
+          border: `1px solid ${C.border}`,
+          borderRadius: 12,
+          padding: "40px clamp(16px, 4vw, 40px)",
+          marginBottom: 32,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <div 
-            style={{
-                position: "absolute",
-                inset: 0,
-                zIndex: 0,
-                opacity: isHovered ? 1 : 0,
-                transition: "opacity 0.3s ease",
-                background: `radial-gradient(
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            opacity: isHovered ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            background: `radial-gradient(
                     1000px circle at ${mousePos.x}px ${mousePos.y}px, 
                     rgba(0, 224, 148, 0.05), 
                     transparent 40%
                 )`,
-                pointerEvents: "none"
-            }} 
+            pointerEvents: "none"
+          }}
         />
 
         <div style={{
@@ -206,7 +267,8 @@ export function ComparePage() {
           alignItems: "center",
           justifyContent: "center",
           gap: isThreePlayers && !isMobile ? "clamp(12px, 2vw, 24px)" : "clamp(16px, 4vw, 60px)",
-          width: "100%", maxWidth: 1000, flexWrap: "wrap"
+          width: "100%", maxWidth: 1200,
+          flexWrap: "wrap"
         }}>
           {/* Jugador 0 */}
           {players[0] && (
@@ -215,7 +277,10 @@ export function ComparePage() {
             </div>
           )}
 
-          <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
+          {/* VS Oculto en móviles */}
+          {!isMobile && (
+            <div style={{ fontSize: 20, fontWeight: 900, color: C.muted, background: C.surface, padding: "12px 20px", borderRadius: 30, border: `1px solid ${C.border}` }}>VS</div>
+          )}
 
           {/* Jugador 1 */}
           {players[1] && (
@@ -227,42 +292,16 @@ export function ComparePage() {
           {/* Jugador 2 (Si existe) */}
           {players[2] && (
             <>
-              <div style={{ fontSize: 16, fontWeight: 900, color: C.muted, background: C.surface, padding: "8px 16px", borderRadius: 20 }}>VS</div>
+              {/*  Segundo VS Oculto en móviles */}
+              {!isMobile && (
+                <div style={{ fontSize: 20, fontWeight: 900, color: C.muted, background: C.surface, padding: "12px 20px", borderRadius: 30, border: `1px solid ${C.border}` }}>VS</div>
+              )}
               <div style={{ flex: "1 1 min-content" }}>
                 <PlayerVSHeader player={players[2]} align="left" />
               </div>
             </>
           )}
         </div>
-      </div>
-
-      {/* ── Acciones y Filtros ── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 13, color: C.muted, fontWeight: 700 }}>Temporada:</span>
-          <select
-            value={selectedSeason || ""}
-            onChange={(e) => setSelectedSeason(e.target.value ? Number(e.target.value) : undefined)}
-            style={{
-              background: C.surface, color: C.text, border: `1px solid ${C.border}`,
-              padding: "8px 16px", borderRadius: 6, fontSize: 13, fontWeight: 700,
-              outline: "none", cursor: "pointer"
-            }}
-          >
-            <option value="">Todas las temporadas</option>
-            {seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-        </div>
-
-        <button
-          onClick={() => { clearPlayers(); navigate("/"); }}
-          style={{
-            padding: "8px 16px", background: "transparent", border: `1px solid ${C.border}`,
-            color: C.text, borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700
-          }}
-        >
-          Volver a la lista
-        </button>
       </div>
 
       {/* ── 1. Resumen General ── */}
