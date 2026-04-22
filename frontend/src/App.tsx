@@ -6,7 +6,7 @@ import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { Layout } from "./components/layout/Layout";
 import { RegisterPage } from "./pages/RegisterPage";
-
+import { ShortlistPage } from "./pages/ShortlistPage";
 
 export default function App() {
   return (
@@ -19,6 +19,7 @@ export default function App() {
           <Route index element={<PlayersPage />} />
           <Route path="compare" element={<ComparePage />} />
           <Route path="players/:id" element={<PlayerProfilePage />} />
+          <Route path="/shortlist" element={<ShortlistPage />} />
         </Route>
 
       </Route>
