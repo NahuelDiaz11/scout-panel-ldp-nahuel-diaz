@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { usePositions, useNationalities } from "../../hooks/usePlayers";
 import type { PlayersFilters } from "../../hooks/usePlayers";

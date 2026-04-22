@@ -154,7 +154,7 @@ export function PlayerCard({ player }: { player: Player }) {
                                 loading="lazy"
                                 width="120"
                                 height="120"
-                                style={{ width: "100%", height: "100%", objectFit: "contain", dropShadow: "0px 10px 10px rgba(0,0,0,0.5)" }} 
+                                style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0px 10px 10px rgba(0,0,0,0.5))" }}
                                 referrerPolicy="no-referrer" 
                             />
                         ) : (

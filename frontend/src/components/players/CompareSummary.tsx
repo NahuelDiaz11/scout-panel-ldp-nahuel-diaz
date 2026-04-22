@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Player } from '../../types';
 
 export function CompareSummary({ players, colors }: { players: Player[]; colors: string[] }) {
