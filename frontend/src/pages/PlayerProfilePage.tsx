@@ -7,6 +7,7 @@ import HeatmapField from "../components/players/HeatmapField";
 import { RadarComparison } from "../components/players/RadarComparison";
 import { useState, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
+import { ErrorState } from "../components/ui/ErrorState";
 
 const C = {
     bg: "#0F0F0F",
@@ -57,17 +58,27 @@ export function PlayerProfilePage() {
 
     if (isError || !player) {
         return (
-            <div style={{ textAlign: "center", padding: 80 }}>
-                <div style={{ color: C.muted, marginBottom: 16 }}>Player not found</div>
-                <button
-                    onClick={() => navigate("/")}
-                    style={{
-                        padding: "8px 20px", background: C.primary, color: "#0F0F0F",
-                        borderRadius: 6, fontWeight: 700, fontSize: 13, border: "none", cursor: "pointer",
-                    }}
-                >
-                    Back to list
-                </button>
+            <div style={{ padding: "80px clamp(16px, 4vw, 40px)", maxWidth: 600, margin: "0 auto" }}>
+                <ErrorState
+                    title="Jugador no encontrado"
+                    message="Ocurrió un error al intentar obtener los datos del perfil o el jugador ya no existe."
+                    onRetry={() => window.location.reload()}
+                />
+
+
+                <div style={{ textAlign: "center", marginTop: 24 }}>
+                    <button
+                        onClick={() => navigate("/")}
+                        style={{
+                            background: "transparent", color: C.muted, border: "none",
+                            fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "color 0.2s"
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = C.text}
+                        onMouseLeave={(e) => e.currentTarget.style.color = C.muted}
+                    >
+                        ← Volver al listado general
+                    </button>
+                </div>
             </div>
         );
     }
