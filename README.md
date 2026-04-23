@@ -292,24 +292,45 @@ El proyecto está completamente contenerizado para garantizar que se ejecute de 
 
 ### Pasos para levantar la aplicación
 
-**1. Clonar el repositorio:**
+## Instalación y configuración
+
+### 1. Clonar el repositorio
+
 ```bash
-git clone 
+git clone https://github.com/NahuelDiaz11/scout-panel-ldp-nahuel-diaz/
 cd scout-panel
 ```
 
-**2. Configurar variables de entorno:**
+### 2. Configurar el Backend (Node.js + Prisma)
 
-Duplicá el archivo de ejemplo en el backend y agregá tu llave de Gemini.
+Accedé a la carpeta del servidor y configurá tus credenciales:
 
 ```bash
-cp backend/.env.example backend/.env
+cd backend
+cp .env.example .env
 ```
 
-Asegurate de que el archivo `backend/.env` contenga:
-PORT=3001
-DATABASE_URL="tu_database_url"
-GEMINI_API_KEY="tu_clave_generada_aqui"
+Editá el archivo `backend/.env` y completá las siguientes variables:
+
+- **PORT**: Puerto de ejecución (por defecto 3001).
+- **DATABASE_URL**: Tu cadena de conexión a PostgreSQL (Docker o local).
+- **GEMINI_API_KEY**: Tu clave de API generada en Google AI Studio.
+- **JWT_SECRET**: Una clave segura para la firma de tokens.
+
+### Configurar el Frontend (React + Vite)
+
+Es necesario indicarle al cliente dónde se encuentra la API:
+
+```bash
+cd ../frontend
+cp .env.example .env # En caso de que tengas el archivo example, sino crealo
+```
+
+Asegurate de que el archivo `frontend/.env` contenga la URL del backend local:
+
+```env
+VITE_API_URL=http://localhost:3001/api
+```
 
 **3. Orquestar los contenedores:**
 
